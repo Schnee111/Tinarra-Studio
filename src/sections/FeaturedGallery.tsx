@@ -7,28 +7,30 @@ const items = [
   {
     title: "Articulated Dragon",
     tag: "Prototyping",
-    src: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564&auto=format&fit=crop"
+    src: "/images/articulated_dragon.jpg"
   },
   {
     title: "Anime Keychains",
     tag: "Custom Merch",
-    src: "https://images.unsplash.com/photo-1634017839464-5c339ebe3cb4?q=80&w=2564&auto=format&fit=crop"
+    src: "/images/keychain.jpg"
   },
   {
     title: "Custom Signage",
     tag: "Architecture",
-    src: "https://images.unsplash.com/photo-1541701494587-cb58502866ab?q=80&w=2670&auto=format&fit=crop"
+    src: "/images/signage.jpg"
   },
   {
     title: "Mechanical Joints",
     tag: "Engineering",
-    src: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?q=80&w=2670&auto=format&fit=crop"
+    src: "/images/joints.jpg"
   }
 ];
 
-export default function FeaturedGallery({ textColor }: { textColor?: any }) {
+export default function FeaturedGallery({ textColor, accentColor }: { textColor?: any, accentColor?: any }) {
   const containerRef = useRef<HTMLDivElement>(null);
+  const trackRef = useRef<HTMLDivElement>(null);
   const [isDesktop, setIsDesktop] = useState(false);
+  const [activeIndex, setActiveIndex] = useState(0);
 
   useEffect(() => {
     const checkDesktop = () => setIsDesktop(window.innerWidth >= 768);
@@ -51,6 +53,16 @@ export default function FeaturedGallery({ textColor }: { textColor?: any }) {
   const finalTextColor = textColor || localTextColor;
   const x = useTransform(scrollYProgress, [0, 1], ["0%", "-60%"]);
 
+  // Deteksi scroll di mobile untuk mengubah indikator oval
+  const handleNativeScroll = () => {
+    if (!trackRef.current || isDesktop) return;
+    const scrollLeft = trackRef.current.scrollLeft;
+    // Lebar kartu 80vw + gap 4vw = 84vw
+    const cardWidth = window.innerWidth * 0.84; 
+    const newIndex = Math.round(scrollLeft / cardWidth);
+    setActiveIndex(Math.min(newIndex, items.length - 1));
+  };
+
   return (
     <motion.section 
       className={styles['gallery-section']} 
@@ -59,19 +71,37 @@ export default function FeaturedGallery({ textColor }: { textColor?: any }) {
     >
       <motion.div className={styles['gallery-sticky']} style={{ color: finalTextColor }}>
         <motion.div 
+          ref={trackRef}
           className={styles['gallery-track']} 
-          style={{ x, willChange: "transform" }}
+          style={{ x: isDesktop ? x : "0%", willChange: "transform" }}
+          onScroll={handleNativeScroll}
         >
           {items.map((item, index) => (
             <Card 
               key={index} 
               item={item} 
               index={index} 
-              textColor={finalTextColor} 
+              textColor="#ffffff" 
               isDesktop={isDesktop}
             />
           ))}
         </motion.div>
+
+        {/* Infinix-style Oval Indicators (Mobile Only) */}
+
+        <div className={styles['mobile-indicators']}>
+          {items.map((_, idx) => (
+            <motion.div 
+              key={idx} 
+              className={`${styles['dot']} ${idx === activeIndex ? styles['active'] : ''}`}
+              style={{ 
+                // Gunakan accentColor dinamis jika sedang aktif
+                backgroundColor: idx === activeIndex ? (accentColor || "#dfff00") : undefined 
+              }}
+            />
+          ))}
+        </div>        
+
       </motion.div>
     </motion.section>
   );
@@ -207,6 +237,3 @@ const RollingText = React.memo(({ text, noRoll = false, textColor }: { text: str
 });
 
 RollingText.displayName = "RollingText";
-
-
-

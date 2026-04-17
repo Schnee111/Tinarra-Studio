@@ -102,7 +102,7 @@
 
 .spec-item::before {
   content: "•";
-  color: var(--accent);
+  color: var(--dot-color, var(--accent));
   font-size: 1.5em;
   line-height: 0.5;
 }

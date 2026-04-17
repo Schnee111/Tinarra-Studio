@@ -1,15 +1,25 @@
 "use client";
 
-import { useRef, useState, useMemo } from "react";
+import { useRef, useState, useMemo, useEffect } from "react";
 import { motion, useScroll, useTransform, useInView } from "framer-motion";
 import styles from "./TechSpecs.module.css";
 import Image from "next/image";
 
-const MotionImage = motion(Image);
+const MotionImage = motion.create(Image);
 
-export default function TechSpecs({ textColor, mutedColor }: { textColor?: any, mutedColor?: any }) {
+export default function TechSpecs({ textColor, mutedColor, accentColor }: { textColor?: any, mutedColor?: any, accentColor?: any }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [isLoaded, setIsLoaded] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 1024);
+    };
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
   
   // Parallax tracking bound to this section's visibility in the viewport
   const { scrollYProgress } = useScroll({
@@ -44,8 +54,8 @@ export default function TechSpecs({ textColor, mutedColor }: { textColor?: any, 
           </motion.span>
           
           <div className={styles['tech-title']}>
-            <CharReveal text="Industrial Grade." delay={0.1} color={textColor} />
-            <CharReveal text="Desktop Scale." delay={0.4} color={textColor} />
+            <CharReveal text="Industrial Grade." delay={0.1} color={textColor} isMobile={isMobile} />
+            <CharReveal text="Desktop Scale." delay={0.4} color={textColor} isMobile={isMobile} />
           </div>
 
           <motion.div 
@@ -59,11 +69,12 @@ export default function TechSpecs({ textColor, mutedColor }: { textColor?: any, 
               }
             }}
           >
-            <WordTypewriter text="We deploy a fleet of optimized machines specializing in high-speed extrusion and extreme dimensional accuracy. Ready for rapid testing and low-volume production." color={mutedColor} />
+            <WordTypewriter text="We deploy a fleet of optimized machines specializing in high-speed extrusion and extreme dimensional accuracy. Ready for rapid testing and low-volume production." color={mutedColor} isMobile={isMobile} />
           </motion.div>
           
           <motion.div 
             className={styles['tech-specs-list']}
+            style={{ "--dot-color": accentColor } as any}
             variants={{
               initial: { opacity: 0 },
               enter: { opacity: 1, transition: { staggerChildren: 0.04, delayChildren: 1.0 } }
@@ -94,7 +105,7 @@ export default function TechSpecs({ textColor, mutedColor }: { textColor?: any, 
           viewport={{ once: true, amount: 0.05 }}
         >
           <MotionImage 
-            src="https://images.unsplash.com/photo-1599839619722-39751411ea63?q=80&w=2574&auto=format&fit=crop" 
+            src="/images/tech_3dprint-machine.jpg" 
             alt="3D Printer Nozzle"
             fill
             sizes="(max-width: 992px) 100vw, 50vw"
@@ -113,7 +124,7 @@ export default function TechSpecs({ textColor, mutedColor }: { textColor?: any, 
   );
 }
 
-function WordTypewriter({ text, color }: { text: string, color?: any }) {
+function WordTypewriter({ text, color, isMobile = false }: { text: string, color?: any, isMobile?: boolean }) {
   const words = useMemo(() => text.split(" "), [text]);
   
   return (
@@ -122,11 +133,11 @@ function WordTypewriter({ text, color }: { text: string, color?: any }) {
         <motion.span
           key={i}
           variants={{
-            initial: { opacity: 0, filter: "blur(5px)", x: 5 },
+            initial: { opacity: 0, x: 5, filter: "blur(5px)" },
             enter: { 
               opacity: 1, 
-              filter: "blur(0px)", 
               x: 0,
+              filter: "blur(0px)",
               transition: { duration: 0.4, ease: "easeOut" } 
             }
           }}
@@ -139,7 +150,7 @@ function WordTypewriter({ text, color }: { text: string, color?: any }) {
   );
 }
 
-function CharReveal({ text, delay = 0, color }: { text: string, delay?: number, color?: any }) {
+function CharReveal({ text, delay = 0, color, isMobile = false }: { text: string, delay?: number, color?: any, isMobile?: boolean }) {
   const words = useMemo(() => text.split(" "), [text]);
   
   return (
@@ -155,7 +166,7 @@ function CharReveal({ text, delay = 0, color }: { text: string, delay?: number, 
                 className={styles['char-item']}
                 style={{ color }}
                 variants={{
-                  initial: { opacity: 0, y: "100%", rotateX: 45 },
+                  initial: { opacity: 0, y: "100%", rotateX: isMobile ? 0 : 45 },
                   enter: { 
                     opacity: 1, 
                     y: 0, 
@@ -163,7 +174,7 @@ function CharReveal({ text, delay = 0, color }: { text: string, delay?: number, 
                     transition: { 
                       duration: 0.8, 
                       ease: [0.22, 1, 0.36, 1],
-                      delay: delay + (absoluteIndex * 0.02) // Balanced character stagger
+                      delay: delay + (absoluteIndex * 0.01) // Balanced character stagger
                     } 
                   }
                 }}
