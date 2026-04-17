@@ -14,7 +14,7 @@ import Marquee from "@/sections/Marquee";
 
 export default function Home() {
   const whiteZoneRef = useRef<HTMLDivElement>(null);
-  
+
   // -- ZONE 1: Gallery & TechSpecs (Unified White Transition) --
   const { scrollYProgress } = useScroll({
     target: whiteZoneRef,
@@ -49,6 +49,13 @@ export default function Home() {
     ["rgba(255, 255, 255, 0.6)", "rgba(0, 0, 0, 0.6)", "rgba(0, 0, 0, 0.6)", "rgba(255, 255, 255, 0.6)"]
   );
 
+  // TRANSISI WARNA AKSEN: Lime -> Cobalt Blue -> Cobalt Blue -> Lime
+  const accentColor = useTransform(
+    scrollYProgress,
+    [0, 0.25, 0.75, 1],
+    ["#dfff00", "#111111", "#111111", "#dfff00"]
+  );
+
   return (
     <main style={{ position: "relative" }}>
       <Navigation />
@@ -58,12 +65,12 @@ export default function Home() {
       </StackedSection>
 
       {/* Main Orchestrated Container */}
-      <motion.div 
-        style={{ 
-          position: "relative", 
-          zIndex: 10, 
+      <motion.div
+        style={{
+          position: "relative",
+          zIndex: 10,
           backgroundColor: bgColor,
-          borderTopLeftRadius: "40px", 
+          borderTopLeftRadius: "40px",
           borderTopRightRadius: "40px",
           willChange: "background-color",
           backfaceVisibility: "hidden"
@@ -72,11 +79,12 @@ export default function Home() {
         <div style={{ position: "relative", zIndex: 20 }}>
           <Manifesto textColor={textColor} mutedColor={mutedColor} />
         </div>
-        
+
         {/* Unified White Zone */}
         <div ref={whiteZoneRef} style={{ position: "relative" }}>
           <section id="products">
-            <FeaturedGallery textColor={textColor} />
+            {/* Teruskan accentColor ke FeaturedGallery */}
+            <FeaturedGallery textColor={textColor} accentColor={accentColor} />
           </section>
 
           <TechSpecs textColor={textColor} mutedColor={secondaryTextColor} />

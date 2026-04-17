@@ -6,6 +6,16 @@
   z-index: 1;
 }
 
+@media (max-width: 1024px) {
+  .stacked-wrapper {
+    pointer-events: auto !important; /* Restore for native scroll capture */
+    touch-action: pan-y !important;
+    height: auto !important; /* Allow natural page length calculation */
+    min-height: 100vh;
+    overflow: visible !important; /* Crucial for native position: sticky child support */
+  }
+}
+
 /* Fix */
 .stacked-card {
   width: 100%;
