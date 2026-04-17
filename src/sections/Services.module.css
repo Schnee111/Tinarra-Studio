@@ -217,16 +217,46 @@
 
 @media (max-width: 768px) {
   .services-content {
-    gap: 25vh;
+    gap: 15vh;
     padding: 10vh 5vw;
+  }
+
+  .services-header {
+    margin-bottom: 5vh;
+  }
+
+  .services-title {
+    font-size: clamp(2rem, 10vw, 3rem);
   }
 
   .left,
   .right {
     align-self: flex-start;
+    text-align: left;
+    align-items: flex-start;
   }
 
   .service-item {
     max-width: 100%;
+    gap: 0.75rem;
+  }
+
+  .lusion-word {
+    font-size: clamp(2rem, 10vw, 3rem);
+  }
+
+  .service-desc {
+    font-size: 1rem;
+    line-height: 1.5;
+  }
+
+  .svg-container-logic {
+    display: block;
+    opacity: 0.5;
+  }
+
+  .svg-path-logic {
+    stroke-width: 16px;
+    filter: none;
   }
 }

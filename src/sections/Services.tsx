@@ -71,15 +71,24 @@ export default function Services() {
 
     const w = svgSize.width;
     const h = svgSize.height;
+    const isMobile = svgSize.width < 768;
 
-    // Adjusted proportions: Header and gap push items significantly downward.
-    // Item 1 sits near 38-40% height. Item 2 near 66-68%. Item 3 near 90-92%.
+    // if (isMobile) {
+    //   // S-Curve vertical path on the left for stacked mobile items
+    //   return `M 12 ${h * 0.15}
+    //           Q 40 ${h * 0.35} 12 ${h * 0.55}
+    //           T 12 ${h * 0.98}`;
+    // }
+
+    // Adjusted proportions for desktop zig-zag
     return `M 0 ${h * 0.25}
             C ${w * 0.4} ${h * 0.15} ${w * 0.95} ${h * 0.25} ${w * 0.82} ${h * 0.40} 
             S ${w * 0.18} ${h * 0.52} ${w * 0.2} ${h * 0.67}
             S ${w * 0.9} ${h * 0.7} ${w * 0.77} ${h * 0.89}
             S ${w * 1.4} ${h * 1} ${w * 0.6} ${h * 1.4}`;
   };
+
+  const isMobile = svgSize.width < 768;
 
   return (
     <section className={styles['services-section']} ref={containerRef} id="services">
@@ -103,11 +112,11 @@ export default function Services() {
           </motion.span>
           <h2 className={styles['services-title']}>
             <div className={styles['title-row']}>
-              <SkewReveal text="FULL-SPECTRUM" delay={0.1} />
+              <SkewReveal text="FULL-SPECTRUM" delay={0.1} isMobile={isMobile} />
             </div>
             <div className={styles['title-row']}>
-              <SkewReveal text="3D" delay={0.2} className={styles['outline-text']} />
-              <SkewReveal text="CAPABILITIES" delay={0.3} className={styles['italic-text']} />
+              <SkewReveal text="3D" delay={0.2} className={styles['outline-text']} isMobile={isMobile} />
+              <SkewReveal text="CAPABILITIES" delay={0.3} className={styles['italic-text']} isMobile={isMobile} />
             </div>
           </h2>
         </header>
@@ -119,9 +128,9 @@ export default function Services() {
           viewport={{ once: false, margin: "-100px 0px" }}
         >
           <div className={styles['service-num']}>{services[0].num}</div>
-          <LusionTitle line1={services[0].line1} line2={services[0].line2} reverse />
+          <LusionTitle line1={services[0].line1} line2={services[0].line2} reverse isMobile={isMobile} />
           <div className={styles['service-desc-wrapper']}>
-            <ServiceDescription text={services[0].desc} />
+            <ServiceDescription text={services[0].desc} isMobile={isMobile} />
           </div>
         </motion.div>
 
@@ -132,9 +141,9 @@ export default function Services() {
           viewport={{ once: false, margin: "-100px 0px" }}
         >
           <div className={styles['service-num']}>{services[1].num}</div>
-          <LusionTitle line1={services[1].line1} line2={services[1].line2} />
+          <LusionTitle line1={services[1].line1} line2={services[1].line2} isMobile={isMobile} />
           <div className={styles['service-desc-wrapper']}>
-            <ServiceDescription text={services[1].desc} />
+            <ServiceDescription text={services[1].desc} isMobile={isMobile} />
           </div>
         </motion.div>
 
@@ -145,9 +154,9 @@ export default function Services() {
           viewport={{ once: false, margin: "-100px 0px" }}
         >
           <div className={styles['service-num']}>{services[2].num}</div>
-          <LusionTitle line1={services[2].line1} line2={services[2].line2} reverse />
+          <LusionTitle line1={services[2].line1} line2={services[2].line2} reverse isMobile={isMobile} />
           <div className={styles['service-desc-wrapper']}>
-            <ServiceDescription text={services[2].desc} />
+            <ServiceDescription text={services[2].desc} isMobile={isMobile} />
           </div>
         </motion.div>
       </div>
@@ -177,7 +186,7 @@ export default function Services() {
   );
 }
 
-function LusionTitle({ line1, line2, reverse = false }: { line1: string, line2: string, reverse?: boolean }) {
+function LusionTitle({ line1, line2, reverse = false, isMobile = false }: { line1: string, line2: string, reverse?: boolean, isMobile?: boolean }) {
   const words1 = useMemo(() => line1.split(" "), [line1]);
   const words2 = useMemo(() => line2.split(" "), [line2]);
   
@@ -188,20 +197,24 @@ function LusionTitle({ line1, line2, reverse = false }: { line1: string, line2: 
 
   useEffect(() => {
     if (isInView) {
-      setPhase("reveal");
-      const timer = setTimeout(() => setPhase("shift"), 500);
-      return () => clearTimeout(timer);
+      if (isMobile) {
+        setPhase("shift"); // Skip reveal phase on mobile
+      } else {
+        setPhase("reveal");
+        const timer = setTimeout(() => setPhase("shift"), 500);
+        return () => clearTimeout(timer);
+      }
     } else {
       setPhase("initial");
     }
-  }, [isInView]);
+  }, [isInView, isMobile]);
 
   // reverse=true (Item 1 & 3): Starts Right (flex-end), shifts to Left (flex-start)
   // reverse=false (Item 2): Starts Left (flex-start), shifts to Right (flex-end)
   const startAlign = reverse ? "flex-end" : "flex-start";
   const endAlign = reverse ? "flex-start" : "flex-end";
   
-  const currentAlign = phase === "shift" ? endAlign : startAlign;
+  const currentAlign = isMobile ? endAlign : (phase === "shift" ? endAlign : startAlign);
 
   return (
     <div ref={detRef} className={styles['lusion-container']}>
@@ -248,17 +261,22 @@ function LusionTitle({ line1, line2, reverse = false }: { line1: string, line2: 
   );
 }
 
-function ServiceDescription({ text }: { text: string }) {
+function ServiceDescription({ text, isMobile = false }: { text: string, isMobile?: boolean }) {
   const words = useMemo(() => text.split(" "), [text]);
   
   return (
     <motion.p 
       className={styles['service-desc']}
       variants={{
-        initial: { opacity: 0 },
+        initial: { opacity: 0, y: isMobile ? 15 : 0 },
         enter: { 
           opacity: 1, 
-          transition: { staggerChildren: 0.02, delayChildren: 0.2 } 
+          y: 0,
+          transition: { 
+            staggerChildren: isMobile ? 0 : 0.02, 
+            delayChildren: 0.2,
+            duration: isMobile ? 0.8 : 0.4 
+          } 
         }
       }}
     >
@@ -266,10 +284,9 @@ function ServiceDescription({ text }: { text: string }) {
         <motion.span
           key={i}
           variants={{
-            initial: { opacity: 0, filter: "blur(0px)", x: 2 },
+            initial: { opacity: 0, x: isMobile ? 0 : 2 },
             enter: { 
               opacity: 1, 
-              filter: "blur(0px)", 
               x: 0,
               transition: { duration: 0.5, ease: "easeOut" } 
             }
@@ -283,7 +300,7 @@ function ServiceDescription({ text }: { text: string }) {
   );
 }
 
-function SkewReveal({ text, delay = 0, className = "" }: { text: string, delay?: number, className?: string }) {
+function SkewReveal({ text, delay = 0, className = "", isMobile = false }: { text: string, delay?: number, className?: string, isMobile?: boolean }) {
 
   const words = useMemo(() => text.split(" "), [text]);
   
@@ -293,15 +310,15 @@ function SkewReveal({ text, delay = 0, className = "" }: { text: string, delay?:
         <span key={i} className={styles['skew-mask']}>
           <motion.span
             className={`${styles['skew-word']} ${className}`}
-            initial={{ y: "110%", skewY: 10, opacity: 0 }}
+            initial={{ y: "110%", skewY: isMobile ? 0 : 10, opacity: 0 }}
             whileInView={{ 
               y: 0, 
               skewY: 0, 
               opacity: 1,
               transition: { 
-                duration: 1.1, 
+                duration: isMobile ? 0.7 : 1.1, 
                 ease: [0.215, 0.61, 0.355, 1],
-                delay: delay + (i * 0.1)
+                delay: isMobile ? delay : delay + (i * 0.1)
               }
             }}
             viewport={{ once: false }}

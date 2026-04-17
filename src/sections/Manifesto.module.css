@@ -29,3 +29,16 @@
   display: inline-block;
   will-change: color;
 }
+
+@media (max-width: 768px) {
+  .manifesto-section {
+    padding: 10vh 5vw;
+  }
+
+  .manifesto-text {
+    font-size: clamp(2rem, 10vw, 3rem);
+    line-height: 1.2;
+    gap: 0.25em 0.25em;
+  }
+}
+

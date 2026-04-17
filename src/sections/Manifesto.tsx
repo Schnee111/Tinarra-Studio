@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useState, useEffect } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import styles from "./Manifesto.module.css";
 
@@ -9,6 +9,17 @@ const text = "We turn digital polygons into physical realities. Precision-crafte
 export default function Manifesto({ textColor, mutedColor }: { textColor?: any, mutedColor?: any }) {
   const containerRef = useRef<HTMLDivElement>(null);
   
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 1024);
+    };
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
+
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start 65%", "end 50%"]
@@ -31,6 +42,7 @@ export default function Manifesto({ textColor, mutedColor }: { textColor?: any, 
               range={[start, end]}
               activeColor={textColor}
               inactiveColor={mutedColor}
+              isMobile={isMobile}
             />
           );
         })}
@@ -39,13 +51,11 @@ export default function Manifesto({ textColor, mutedColor }: { textColor?: any, 
   );
 }
 
-function Word({ word, progress, range, activeColor, inactiveColor }: { word: string, progress: any, range: [number, number], activeColor?: any, inactiveColor?: any }) {
-  // Fix: Move the 'reveal' logic to Opacity and Blur, letting the Prop handle the base color.
-  // This avoids the 'MotionValue inside useTransform' limitation that caused the text not to change.
+function Word({ word, progress, range, activeColor, inactiveColor, isMobile }: { word: string, progress: any, range: [number, number], activeColor?: any, inactiveColor?: any, isMobile: boolean }) {
+  // Fix: Move the 'reveal' logic to Opacity, letting the Prop handle the base color.
   const revealProgress = useTransform(progress, range, [0, 1]);
   const opacity = useTransform(revealProgress, [0, 1], [0.1, 1]);
-  const blurVal = useTransform(revealProgress, [0, 1], [2, 0]); // Lighter blur for GPU
-  const filter = useTransform(blurVal, (v) => `blur(${v}px)`);
+  const blur = useTransform(revealProgress, [0, 1], ["blur(4px)", "blur(0px)"]);
 
   // We use the activeColor (which is a MotionValue representing the global white/black state)
   // as the base color for the text.
@@ -53,7 +63,12 @@ function Word({ word, progress, range, activeColor, inactiveColor }: { word: str
     <span className={styles['word-wrapper']}>
       <motion.span 
         className={styles['char']} 
-        style={{ color: activeColor, opacity, filter, willChange: "opacity, filter" }}
+        style={{ 
+          color: activeColor, 
+          opacity, 
+          filter: isMobile ? "none" : blur, 
+          willChange: "opacity, filter" 
+        }}
       >
         {word}
       </motion.span>
