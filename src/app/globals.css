@@ -25,10 +25,48 @@ html, body {
   color: var(--foreground);
   font-family: var(--font-manrope), sans-serif;
   cursor: none;
-  overflow-x: clip;
+  overflow-x: clip; /* clip is safer for mobile sticky/momentum scroll than hidden */
+  /* Remove overflow-y: auto !important to allow position: sticky to hit the window root */
   width: 100%;
   max-width: 100vw;
-  min-height: 100vh;
+  height: auto !important; /* Ensure body can expand for native scroll */
+  min-height: 100dvh;
+
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+::-webkit-scrollbar,
+*::-webkit-scrollbar,
+html::-webkit-scrollbar, 
+body::-webkit-scrollbar { 
+  display: none !important; 
+  width: 0px !important;
+  background: transparent !important;
+}
+
+@media (max-width: 1024px) {
+  html, body {
+    position: static; /* position: relative can break sticky on some mobile browsers */
+  }
+
+  /* Hilangkan efek kabut/fog global di mobile agar footer tetap bersih */
+  body::after {
+    display: none !important;
+  }
+
+  /* Hilangkan paksa efek blur pada animasi footer dan tech section di mobileview */
+  #contact, #contact *, #tech-specs, #tech-specs * {
+    filter: none !important;
+    backdrop-filter: none !important;
+  }
+}
+
+/* Restore physical cursor on touch devices */
+@media (pointer: coarse) {
+  html, body {
+    cursor: auto !important;
+  }
 }
 
 /* Global Persistent Viewport Bottom Fog (Mobile Safe Default) */
@@ -38,15 +76,16 @@ body::after {
   bottom: 0;
   left: 0;
   width: 100%;
-  height: clamp(100px, 20vh, 200px);
-  background: var(--fog-color, linear-gradient(to top, rgba(10, 10, 9, 0.75) 0%, transparent 100%));
+  height: clamp(60px, 15vh, 120px); /* Smaller on mobile */
+  background: var(--fog-color, linear-gradient(to top, rgba(3, 3, 3, 0.8) 0%, transparent 100%));
   pointer-events: none;
   z-index: 99999;
 }
 
 /* Enable heavy glass blur rendering ONLY on stronger Desktop/Tablet environments */
-@media (min-width: 768px) {
+@media (min-width: 1024px) {
   body::after {
+    height: clamp(100px, 20vh, 200px);
     backdrop-filter: blur(8px);
     -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 90%);
     mask-image: linear-gradient(to top, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 90%);
@@ -56,6 +95,11 @@ body::after {
 ::-webkit-scrollbar { display: none; }
 
 a, button { cursor: none !important; }
+
+@media (pointer: coarse) {
+  a, button { cursor: auto !important; }
+  .cursor-dot, .cursor-outline { display: none !important; }
+}
 
 /* Cursors */
 
