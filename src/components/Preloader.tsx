@@ -39,10 +39,10 @@ export default function Preloader() {
           className={styles['preloader-container']}
           initial={{ opacity: 1 }}
           exit={{ 
-            scale: 1.2,
+            scale: 12,
             opacity: 0,
             filter: "blur(60px)",
-            transition: { duration: 1.5, ease: [0.76, 0, 0.24, 1] } 
+            transition: { duration: 1.8, ease: [0.76, 0, 0.24, 1] } 
           }}
         >
           <div className={styles['preloader-content']}>
