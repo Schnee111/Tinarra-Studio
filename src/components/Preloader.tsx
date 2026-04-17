@@ -5,16 +5,32 @@ import { motion, AnimatePresence } from "framer-motion";
 import styles from "./Preloader.module.css";
 
 export default function Preloader() {
-  const [isLoading, setIsLoading] = useState(true);
+  const [is3DReady, setIs3DReady] = useState(false);
+  const [minTimePassed, setMinTimePassed] = useState(false);
 
   useEffect(() => {
-    // Elegant 2-second lead-in for the ring animation
+    // 1. Min aesthetic time for the logo/ring
     const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 2200);
+      setMinTimePassed(true);
+    }, 2000);
 
-    return () => clearTimeout(timer);
+    // 2. Safety timeout (if 3D fails to load, don't block user forever)
+    const safetyTimer = setTimeout(() => {
+      setIs3DReady(true);
+    }, 5000);
+
+    // 3. Listener for the 3D scene
+    const handleReady = () => setIs3DReady(true);
+    window.addEventListener('tinarra-3d-ready', handleReady);
+
+    return () => {
+      clearTimeout(timer);
+      clearTimeout(safetyTimer);
+      window.removeEventListener('tinarra-3d-ready', handleReady);
+    };
   }, []);
+
+  const isLoading = !is3DReady || !minTimePassed;
 
   return (
     <AnimatePresence>
@@ -23,9 +39,9 @@ export default function Preloader() {
           className={styles['preloader-container']}
           initial={{ opacity: 1 }}
           exit={{ 
-            scale: 55,
+            scale: 1.2,
             opacity: 0,
-            filter: "blur(4px)",
+            filter: "blur(60px)",
             transition: { duration: 1.5, ease: [0.76, 0, 0.24, 1] } 
           }}
         >

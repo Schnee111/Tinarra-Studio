@@ -68,13 +68,13 @@ export default function Hero() {
   
   // Optical Effects: Fade and Blur (Focus Pull)
   const opacity = useTransform(scrollYProgress, [0, 0.7], [1, 0]);
-  const blurValue = useTransform(scrollYProgress, [0, 0.8], [0, 15]);
+  const blurValue = useTransform(scrollYProgress, [0, 0.8], [0, 8]);
   const blur = useTransform(blurValue, (v) => `blur(${v}px)`);
 
   // Foot / Layout Exits: Deep coordinated transitions
   const globalOpacity = useTransform(scrollYProgress, [0, 0.6], [1, 0]);
   const footerOpacity = useTransform(scrollYProgress, [0, 0.3], [1, 0]);
-  const footerBlurValue = useTransform(scrollYProgress, [0, 0.3], [0, 20]);
+  const footerBlurValue = useTransform(scrollYProgress, [0, 0.3], [0, 3]);
   const footerBlur = useTransform(footerBlurValue, (v) => `blur(${v}px)`);
 
   return (
@@ -83,6 +83,9 @@ export default function Hero() {
       id="home" 
       ref={containerRef}
       style={{ opacity: globalOpacity }}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 1.5, ease: "easeOut" }}
     >
       <div className={styles['hero-fullscreen-3d']}>
         <Canvas 
@@ -104,7 +107,7 @@ export default function Hero() {
           <motion.h1 className={`${styles['giant-text']} ${styles['outline-text']} ${styles['offset-text']}`} style={{ y: y2, x: x2 }}>STUDIO</motion.h1>
         </div>
         <div className={styles['hero-subtext-wrapper']}>
-          <WordReveal text="A Micro-Factory for Digital Craftsmanship." delay={0.8} />
+          <WordReveal text="A Micro-Factory for Digital Craftsmanship." delay={1.5} />
         </div>
       </motion.div>
 

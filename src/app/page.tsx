@@ -64,7 +64,9 @@ export default function Home() {
           zIndex: 10, 
           backgroundColor: bgColor,
           borderTopLeftRadius: "40px", 
-          borderTopRightRadius: "40px" 
+          borderTopRightRadius: "40px",
+          willChange: "background-color",
+          backfaceVisibility: "hidden"
         }}
       >
         <div style={{ position: "relative", zIndex: 20 }}>

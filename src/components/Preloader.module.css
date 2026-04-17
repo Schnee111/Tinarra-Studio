@@ -12,6 +12,7 @@
   color: #fff;
   overflow: hidden;
   cursor: wait;
+  will-change: transform, opacity, filter;
 }
 
 .preloader-content {

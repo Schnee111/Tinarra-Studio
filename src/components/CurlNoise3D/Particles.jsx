@@ -35,8 +35,19 @@ export function Particles({ speed = 100, fov = 20, aperture = 1.8, focus = 5.1, 
     }
     return particles
   }, [size])
+  const frames = useRef(0)
+  const signaled = useRef(false)
+
   // Update FBO and pointcloud every frame
   useFrame((state) => {
+    // Warm up logic: wait for a few frames to ensure shaders are compiled
+    if (frames.current < 15) {
+      frames.current++
+    } else if (!signaled.current) {
+      signaled.current = true
+      window.dispatchEvent(new CustomEvent('tinarra-3d-ready'))
+    }
+
     state.gl.setRenderTarget(target)
     state.gl.clear()
     state.gl.render(scene, camera)

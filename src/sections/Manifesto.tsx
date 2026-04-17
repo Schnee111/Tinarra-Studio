@@ -11,7 +11,7 @@ export default function Manifesto({ textColor, mutedColor }: { textColor?: any, 
   
   const { scrollYProgress } = useScroll({
     target: containerRef,
-    offset: ["start 85%", "end 50%"]
+    offset: ["start 65%", "end 50%"]
   });
 
   const words = text.split(" ");
@@ -20,8 +20,8 @@ export default function Manifesto({ textColor, mutedColor }: { textColor?: any, 
     <section className={styles['manifesto-section']} ref={containerRef} id="story">
       <h2 className={styles['manifesto-text']}>
         {words.map((word, i) => {
-          const start = i / (words.length + 5); 
-          const end = (i + 5) / (words.length + 5); 
+          const start = i / (words.length + 3); 
+          const end = (i + 3) / (words.length + 3); 
           
           return (
             <Word 
@@ -44,7 +44,7 @@ function Word({ word, progress, range, activeColor, inactiveColor }: { word: str
   // This avoids the 'MotionValue inside useTransform' limitation that caused the text not to change.
   const revealProgress = useTransform(progress, range, [0, 1]);
   const opacity = useTransform(revealProgress, [0, 1], [0.1, 1]);
-  const blurVal = useTransform(revealProgress, [0, 1], [4, 0]);
+  const blurVal = useTransform(revealProgress, [0, 1], [2, 0]); // Lighter blur for GPU
   const filter = useTransform(blurVal, (v) => `blur(${v}px)`);
 
   // We use the activeColor (which is a MotionValue representing the global white/black state)
@@ -53,7 +53,7 @@ function Word({ word, progress, range, activeColor, inactiveColor }: { word: str
     <span className={styles['word-wrapper']}>
       <motion.span 
         className={styles['char']} 
-        style={{ color: activeColor, opacity, filter }}
+        style={{ color: activeColor, opacity, filter, willChange: "opacity, filter" }}
       >
         {word}
       </motion.span>

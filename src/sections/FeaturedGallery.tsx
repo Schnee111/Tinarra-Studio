@@ -60,7 +60,7 @@ export default function FeaturedGallery({ textColor }: { textColor?: any }) {
       <motion.div className={styles['gallery-sticky']} style={{ color: finalTextColor }}>
         <motion.div 
           className={styles['gallery-track']} 
-          style={{ x }}
+          style={{ x, willChange: "transform" }}
         >
           {items.map((item, index) => (
             <Card 
@@ -81,7 +81,7 @@ export default function FeaturedGallery({ textColor }: { textColor?: any }) {
 const containerVariantsDesktop = {
   hidden: { scale: 0.9, opacity: 0 },
   visible: { scale: 1, opacity: 1 },
-  exit: { scale: 0.8, opacity: 0 }
+  exit: { scale: 0.85, opacity: 0 }
 };
 
 const containerVariantsMobile = {
@@ -91,9 +91,9 @@ const containerVariantsMobile = {
 };
 
 const imageVariantsDesktop = {
-  hidden: { scale: 1.3 },
+  hidden: { scale: 1.2 },
   visible: { scale: 1 },
-  exit: { scale: 1.5 }
+  exit: { scale: 1.3 }
 };
 
 const imageVariantsMobile = {
@@ -102,7 +102,7 @@ const imageVariantsMobile = {
   exit: { scale: 1 }
 };
 
-const transitionBase = { duration: 1.4, ease: [0.22, 1, 0.36, 1] as any };
+const transitionBase = { duration: 0.8, ease: [0.22, 1, 0.36, 1] as any };
 const transitionMobile = { duration: 0.5, ease: [0.22, 1, 0.36, 1] as any };
 
 const Card = React.memo(({ item, index, textColor, isDesktop }: { item: typeof items[0], index: number, textColor: any, isDesktop: boolean }) => {
@@ -122,14 +122,14 @@ const Card = React.memo(({ item, index, textColor, isDesktop }: { item: typeof i
       initial="hidden"
       animate={isInView ? "visible" : "exit"}
       transition={transition}
-      style={{ borderColor: textColor }}
+      style={{ borderColor: textColor, opacity: 1, willChange: "transform, opacity" }}
     >
       <motion.div
         className={styles['image-container']}
         variants={imageVariants}
         initial="hidden"
         animate={isInView ? "visible" : "exit"}
-        transition={{ ...transition, duration: isDesktop ? 1.6 : 0.5 }}
+        transition={{ ...transition, duration: isDesktop ? 0.8 : 0.5 }}
       >
         <Image 
           src={item.src} 
@@ -163,13 +163,13 @@ const Card = React.memo(({ item, index, textColor, isDesktop }: { item: typeof i
 Card.displayName = "Card";
 
 const RollingText = React.memo(({ text, noRoll = false, textColor }: { text: string, noRoll?: boolean, textColor: any }) => {
-  const characters = useMemo(() => text.split(""), [text]);
+  const words = useMemo(() => text.split(" "), [text]);
 
   return (
     <div className={styles['roll-container']}>
       <div className={styles['roll-inner']}>
         <div className={styles['roll-text-wrapper']}>
-          {characters.map((char, i) => (
+          {words.map((word, i) => (
             <motion.span
               key={i}
               className={styles['roll-char']}
@@ -183,20 +183,20 @@ const RollingText = React.memo(({ text, noRoll = false, textColor }: { text: str
                   transition: { 
                     duration: 0.8, 
                     ease: [0.22, 1, 0.36, 1] as any,
-                    delay: i * 0.015 
+                    delay: i * 0.08 
                   } 
                 }
               }}
             >
-              {char === " " ? "\u00A0" : char}
+              {word}&nbsp;
             </motion.span>
           ))}
         </div>
         {!noRoll && (
           <div className={`${styles['roll-text-wrapper']} ${styles['hover-layer']}`}>
-            {characters.map((char, i) => (
+            {words.map((word, i) => (
               <span key={i} className={styles['roll-char']}>
-                {char === " " ? "\u00A0" : char}
+                {word}&nbsp;
               </span>
             ))}
           </div>
