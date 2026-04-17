@@ -1,15 +1,27 @@
+/* ========================================= */
+/* 1. NAVBAR GLOBAL (INVERSE EFFECT)         */
+/* ========================================= */
 .nav-container {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
-  z-index: 100;
-  padding: 2rem 8vw;
-  pointer-events: none;
+  z-index: 99999;
+  padding: 1.5rem 6vw;
+  pointer-events: none; /* Biarkan klik tembus ke bawah jika bukan link */
+  
+  /* RAHASIA INVERSE: Hanya di sini! */
   mix-blend-mode: difference;
+  color: #ffffff;
 }
 
-.nav-content {
+@media (min-width: 1024px) {
+  .nav-container {
+    padding: 2rem 8vw;
+  }
+}
+
+.nav-inner {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -17,39 +29,41 @@
   margin: 0 auto;
 }
 
-.nav-content > * {
-  pointer-events: auto;
+.nav-inner > * {
+  pointer-events: auto; /* Aktifkan klik hanya untuk anak-anaknya */
 }
 
-.nav-logo {
+.logo {
   font-family: var(--font-syne), sans-serif;
   font-weight: 700;
   font-size: 1.1rem;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: #fff;
+  color: inherit; /* Mewarisi warna inverse dari container */
   text-decoration: none;
 }
 
-.nav-links {
-  display: flex;
+/* ========================================= */
+/* 2. DESKTOP NAVIGATION                     */
+/* ========================================= */
+.desktop-links {
+  display: none;
   align-items: center;
   gap: 2.5rem;
 }
 
-.nav-links a {
+.desktop-links a:not(.desktop-cta) {
   font-family: var(--font-manrope), sans-serif;
-  font-size: clamp(0.8rem, 0.1vw, 0.9rem);
+  font-size: 0.8rem;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.2em;
-  color: #fff;
+  color: inherit;
   text-decoration: none;
-  transition: color 0.3s, opacity 0.3s;
   position: relative;
 }
 
-.nav-links a:not(.nav-cta)::after {
+.desktop-links a:not(.desktop-cta)::after {
   content: "";
   position: absolute;
   width: 100%;
@@ -59,33 +73,169 @@
   background-color: currentColor;
   transform: scaleX(0);
   transform-origin: right;
-  transition: transform 0.8s cubic-bezier(0.19, 1, 0.22, 1);
+  transition: transform 0.6s cubic-bezier(0.19, 1, 0.22, 1);
 }
 
-.nav-links a:not(.nav-cta):hover::after {
+.desktop-links a:not(.desktop-cta):hover::after {
   transform: scaleX(1);
   transform-origin: left;
 }
 
-.nav-links a:hover {
-  color: #fff;
-}
-
-.nav-cta {
+.desktop-cta {
   font-family: var(--font-manrope), sans-serif;
-  font-size: clamp(0.65rem, 0.85vw, 0.72rem) !important;
-  font-weight: 600 !important;
+  font-size: 0.7rem;
+  font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.2em;
-  color: #fff !important;
-  border: 1px solid #fff !important;
+  color: inherit;
+  border: 1px solid currentColor;
   border-radius: 999px;
-  padding: 0.55rem 1.3rem !important;
-  transition: border-color 0.3s, background 0.3s, color 0.3s !important;
+  padding: 0.6rem 1.4rem;
+  transition: all 0.3s ease;
+  text-decoration: none;
 }
 
-.nav-cta:hover {
-  background: #fff !important;
-  color: #000 !important;
-  border-color: #fff !important;
+.desktop-cta:hover {
+  background: currentColor;
+  color: #000;
+}
+
+@media (min-width: 768px) {
+  .desktop-links {
+    display: flex;
+  }
+}
+
+/* ========================================= */
+/* 3. MOBILE HAMBURGER BUTTON                */
+/* ========================================= */
+.hamburger {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-end;
+  gap: 6px;
+  width: 40px;
+  height: 40px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.line {
+  display: block;
+  height: 2px;
+  background-color: currentColor;
+  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), width 0.4s;
+  border-radius: 2px;
+}
+
+.line:first-child { width: 32px; }
+.line:last-child { width: 20px; }
+
+.hamburger.open .line:first-child {
+  transform: translateY(4px) rotate(45deg);
+  width: 28px;
+}
+
+.hamburger.open .line:last-child {
+  transform: translateY(-4px) rotate(-45deg);
+  width: 28px;
+}
+
+@media (min-width: 768px) {
+  .hamburger {
+    display: none;
+  }
+}
+
+/* ========================================= */
+/* 4. FULLSCREEN MOBILE OVERLAY              */
+/* ========================================= */
+.mobile-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100dvh;
+  /* Hitam murni agar mix-blend-mode logo & hamburger menjadi putih cerah saat dibuka */
+  background-color: #000000; 
+  z-index: 99998; /* Berada tepat DI BAWAH navbar header */
+  display: flex;
+  flex-direction: column;
+  padding: 6rem 6vw 3rem;
+  pointer-events: auto;
+}
+
+.mobile-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  margin-top: 2rem;
+}
+
+.mobile-links {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* Memotong teks agar terlihat meluncur dari ketiadaan */
+.overflow-wrapper {
+  overflow: hidden;
+  padding-bottom: 5px; /* ruang untuk descender huruf (seperti huruf g/y) */
+}
+
+.mobile-links a:not(.mobile-cta) {
+  display: inline-block;
+  font-family: var(--font-syne), sans-serif;
+  font-size: clamp(2.5rem, 12vw, 4rem);
+  font-weight: 700;
+  color: #fff;
+  text-decoration: none;
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+
+.mobile-cta {
+  display: inline-block;
+  font-family: var(--font-manrope), sans-serif;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: #000;
+  background-color: var(--accent);
+  padding: 0.8rem 1.8rem;
+  border-radius: 999px;
+  text-decoration: none;
+}
+
+.mobile-footer {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding-top: 2rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.socials {
+  display: flex;
+  gap: 2rem;
+}
+
+.socials a {
+  font-family: var(--font-manrope), sans-serif;
+  font-size: 0.85rem;
+  color: #fff;
+  text-decoration: none;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.mobile-footer p {
+  font-family: var(--font-jakarta), sans-serif;
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.5);
 }
