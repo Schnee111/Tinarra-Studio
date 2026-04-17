@@ -177,3 +177,64 @@
   border-radius: 10px; /* Force capsule shape, not oval */
   margin-top: 7px;
 }
+
+@media (max-width: 768px) {
+  .hero-section {
+    pointer-events: auto !important; /* Restore for native scroll capture */
+    touch-action: pan-y !important;
+    overflow: visible !important; /* Prevent scroll-locking in some mobile browsers */
+    height: auto !important; /* Allow natural page length calculation */
+    min-height: 100vh;
+  }
+
+  .hero-brutalist-text {
+    justify-content: center;
+    padding: 0 5vw;
+    pointer-events: none; /* Already none, but keep priority */
+  }
+
+  .giant-text {
+    font-size: clamp(3.2rem, 15vw, 4rem);
+    text-align: center;
+  }
+
+  .primary-text,
+  .offset-text {
+    margin-right: 0 !important;
+    margin-left: 0 !important;
+    margin-top: 0 !important;
+  }
+
+  .title-group {
+    gap: 0.5rem;
+  }
+
+  .hero-subtext-wrapper {
+    margin-top: 2rem;
+  }
+
+  .reveal-word {
+    font-size: 0.65rem;
+    letter-spacing: 0.3em;
+  }
+
+  .hero-footer {
+    padding: 8rem 5vw;
+    pointer-events: auto; /* Ensure indicator remains clickable */
+  }
+
+  .hero-footer-content {
+    pointer-events: auto;
+  }
+
+  .scroll-indicator {
+    width: 16px;
+    height: 28px;
+  }
+
+  .scroll-dot {
+    width: 3px;
+    height: 3px;
+    margin-top: 5px;
+  }
+}

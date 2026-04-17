@@ -6,7 +6,7 @@ import { createPortal, useFrame } from '@react-three/fiber'
 import { useFBO } from '@react-three/drei'
 import './materials'
 
-export function Particles({ speed = 100, fov = 20, aperture = 1.8, focus = 5.1, curl = 0.25, size = 512, scroll = 0, ...props }) {
+export function Particles({ speed = 100, fov = 20, aperture = 1.8, focus = 5.1, curl = 0.25, size = 420, scroll = 0, interactive = true, ...props }) {
   const simRef = useRef()
   const renderRef = useRef()
   // Set up FBO
@@ -64,29 +64,34 @@ export function Particles({ speed = 100, fov = 20, aperture = 1.8, focus = 5.1, 
     // Sinkronisasi posisi kamera untuk kalkulasi raycast shader 3D
     simRef.current.uniforms.uCameraPos.value.copy(state.camera.position)
 
-    // Interactive Mouse Scattering
-    state.raycaster.setFromCamera(state.pointer, state.camera);
-    // Align normal plane to camera relative rotation
-    dummyPlane.normal.set(0, 0, 1).applyQuaternion(state.camera.quaternion);
-    state.raycaster.ray.intersectPlane(dummyPlane, intersectPoint);
+    if (interactive) {
+      // Interactive Mouse Scattering
+      state.raycaster.setFromCamera(state.pointer, state.camera);
+      // Align normal plane to camera relative rotation
+      dummyPlane.normal.set(0, 0, 1).applyQuaternion(state.camera.quaternion);
+      state.raycaster.ray.intersectPlane(dummyPlane, intersectPoint);
 
-    if (intersectPoint) {
-      // Pergerakan target mouse dibuat mengambang (trailing effect) layaknya momentum scroll Lenis
-      // Tidak instan/mentah ke kursor, tapi mengikuti perlahan dari kejauhan
-      simRef.current.uniforms.uMouse.value.lerp(intersectPoint, 0.015);
+      if (intersectPoint) {
+        // Pergerakan target mouse dibuat mengambang (trailing effect) layaknya momentum scroll Lenis
+        // Tidak instan/mentah ke kursor, tapi mengikuti perlahan dari kejauhan
+        simRef.current.uniforms.uMouse.value.lerp(intersectPoint, 0.015);
 
-      const isHovering = (Math.abs(state.pointer.x) > 0.01 || Math.abs(state.pointer.y) > 0.01) ? 1.0 : 0.0;
+        const isHovering = (Math.abs(state.pointer.x) > 0.01 || Math.abs(state.pointer.y) > 0.01) ? 1.0 : 0.0;
 
-      // Transition drag dan kecepatan hover di-set ultra-smooth
-      const currentHover = simRef.current.uniforms.uHover.value;
-      if (isHovering === 1.0) {
-        // Naik ke bentuk menyebar dengan kurva yang lebih lambat, bukan seketika teracak liar
-        simRef.current.uniforms.uHover.value = THREE.MathUtils.lerp(currentHover, 1.0, 1.0);
+        // Transition drag dan kecepatan hover di-set ultra-smooth
+        const currentHover = simRef.current.uniforms.uHover.value;
+        if (isHovering === 1.0) {
+          // Naik ke bentuk menyebar dengan kurva yang lebih lambat, bukan seketika teracak liar
+          simRef.current.uniforms.uHover.value = THREE.MathUtils.lerp(currentHover, 1.0, 1.0);
+        } else {
+          // Sangat pelan kembali ke shape awal saat pointer pergi (floaty)
+          simRef.current.uniforms.uHover.value = THREE.MathUtils.lerp(currentHover, 0.0, 0.01);
+        }
       } else {
-        // Sangat pelan kembali ke shape awal saat pointer pergi (floaty)
-        simRef.current.uniforms.uHover.value = THREE.MathUtils.lerp(currentHover, 0.0, 0.01);
+        simRef.current.uniforms.uHover.value = THREE.MathUtils.lerp(simRef.current.uniforms.uHover.value, 0.0, 0.01);
       }
     } else {
+      // Gracefully transition hover effect back to 0 if interaction is disabled at runtime
       simRef.current.uniforms.uHover.value = THREE.MathUtils.lerp(simRef.current.uniforms.uHover.value, 0.0, 0.01);
     }
   })

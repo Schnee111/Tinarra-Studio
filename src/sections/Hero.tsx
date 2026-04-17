@@ -20,11 +20,11 @@ export default function Hero() {
     const cores = navigator.hardwareConcurrency || 4;
 
     if (isMobile) {
-      setParticleSize(150); // Lower particle count for mobile
+      setParticleSize(220); // Lower particle count for mobile
     } else if (cores >= 8) {
       setParticleSize(420); // High-end devices
     } else {
-      setParticleSize(250); // Mid-range laptops
+      setParticleSize(320); // Mid-range laptops
     }
 
     // Performance Guard: Matikan render 3D jika di luar viewport
@@ -77,6 +77,12 @@ export default function Hero() {
   const footerBlurValue = useTransform(scrollYProgress, [0, 0.3], [0, 3]);
   const footerBlur = useTransform(footerBlurValue, (v) => `blur(${v}px)`);
 
+  // Detect Mobile for heavy effect stripping
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    setIsMobile(window.innerWidth < 1024);
+  }, []);
+
   return (
     <motion.section 
       className={styles['hero-section']} 
@@ -92,19 +98,61 @@ export default function Hero() {
           frameloop={isCanvasActive ? "always" : "never"} 
           camera={{ position: [0, 0, 4], fov: 45 }}
           resize={{ offsetSize: true }}
+          gl={{ antialias: !isMobile, powerPreference: "high-performance" }}
         >
           <color attach="background" args={['#030303']} />
           <ambientLight intensity={1} />
-          <Particles speed={0.1} fov={150} aperture={4.5} focus={3.1} curl={0.25} size={particleSize} scroll={scrollVal} />
-          <OrbitControls makeDefault autoRotate autoRotateSpeed={1} enableZoom={false} enablePan={false} enableRotate={false} />
+          <Particles 
+            speed={0.1} 
+            fov={150} 
+            aperture={4.5} 
+            focus={3.1} 
+            curl={0.25} 
+            size={particleSize} 
+            scroll={isMobile ? 0 : scrollVal} // Prevent heavy divergence spread on mobile during scroll
+            interactive={!isMobile} // Disable scattering interaction on mobile
+          />
+          {!isMobile && (
+            <OrbitControls 
+              makeDefault 
+              autoRotate 
+              autoRotateSpeed={1} 
+              enableZoom={false} 
+              enablePan={false} 
+              enableRotate={false} 
+            />
+          )}
           <CameraShake yawFrequency={1} maxYaw={0.05} pitchFrequency={1} maxPitch={0.05} rollFrequency={0.5} maxRoll={0.5} intensity={0.2} />
         </Canvas>
       </div>
 
-      <motion.div className={styles['hero-brutalist-text']} style={{ opacity, scale, filter: blur }}>
+      <motion.div 
+        className={styles['hero-brutalist-text']} 
+        style={{ 
+          opacity: isMobile ? 1 : opacity, 
+          scale: isMobile ? 1 : scale, 
+          filter: isMobile ? "none" : blur 
+        }}
+      >
         <div className={styles['title-group']}>
-          <motion.h1 className={`${styles['giant-text']} ${styles['primary-text']}`} style={{ y: y1, x: x1 }}>TINARRA</motion.h1>
-          <motion.h1 className={`${styles['giant-text']} ${styles['outline-text']} ${styles['offset-text']}`} style={{ y: y2, x: x2 }}>STUDIO</motion.h1>
+          <motion.h1 
+            className={`${styles['giant-text']} ${styles['primary-text']}`} 
+            style={{ 
+              y: isMobile ? 0 : y1, 
+              x: isMobile ? 0 : x1 
+            }}
+          >
+            TINARRA
+          </motion.h1>
+          <motion.h1 
+            className={`${styles['giant-text']} ${styles['outline-text']} ${styles['offset-text']}`} 
+            style={{ 
+              y: isMobile ? 0 : y2, 
+              x: isMobile ? 0 : x2 
+            }}
+          >
+            STUDIO
+          </motion.h1>
         </div>
         <div className={styles['hero-subtext-wrapper']}>
           <WordReveal text="A Micro-Factory for Digital Craftsmanship." delay={1.5} />
@@ -114,7 +162,10 @@ export default function Hero() {
       <div className={styles['hero-footer']}>
         <motion.div 
           className={styles['hero-footer-content']}
-          style={{ opacity: footerOpacity, filter: footerBlur }}
+          style={{ 
+            opacity: isMobile ? 1 : footerOpacity, 
+            filter: isMobile ? "none" : footerBlur 
+          }}
         >
           <div className={styles['hero-scroll-wrapper']}>
             <a href="#story" onClick={handleScroll} className={styles['scroll-indicator-link']}>
