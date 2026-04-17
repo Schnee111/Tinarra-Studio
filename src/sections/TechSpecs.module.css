@@ -1,0 +1,153 @@
+.tech-section {
+  position: relative;
+  min-height: 100vh;
+  /* Increased top padding for better breathing room from previous section */
+  padding: clamp(10rem, 15vh, 15rem) 8vw clamp(5rem, 8vh, 8rem);
+  background-color: transparent;
+  display: flex;
+  align-items: center;
+}
+
+.tech-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6vw;
+  align-items: center;
+  max-width: 1400px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+@media (max-width: 992px) {
+  .tech-container {
+    grid-template-columns: 1fr;
+    gap: 4rem;
+  }
+}
+
+.tech-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.mask-container {
+  display: block;
+  overflow: hidden;
+  position: relative;
+}
+
+.char-wrapper {
+  display: inline-flex;
+  flex-wrap: wrap;
+  perspective: 1000px;
+}
+
+.word-wrapper {
+  display: inline-flex;
+  white-space: nowrap;
+}
+
+.char-item {
+  display: inline-block;
+  white-space: pre;
+  will-change: transform, opacity;
+}
+
+.tech-subtitle {
+  font-family: var(--font-manrope), sans-serif;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--accent);
+}
+
+.tech-title {
+  display: flex;
+  flex-direction: column;
+  font-family: var(--font-jakarta), sans-serif;
+  font-size: clamp(2.5rem, 4.5vw, 4.5rem);
+  font-weight: 600;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  color: var(--foreground);
+}
+
+.tech-description {
+  font-family: var(--font-manrope), sans-serif;
+  font-size: clamp(1rem, 1.2vw, 1.25rem);
+  line-height: 1.6;
+  color: var(--muted);
+  max-width: 600px;
+  margin-top: 1rem;
+}
+
+.tech-specs-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.spec-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  font-family: var(--font-manrope), sans-serif;
+  font-size: 1.1em;
+  color: var(--foreground);
+  font-weight: 500;
+}
+
+.spec-item::before {
+  content: "•";
+  color: var(--accent);
+  font-size: 1.5em;
+  line-height: 0.5;
+}
+
+.image-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  border-radius: 36px;
+  background-color: var(--surface);
+  will-change: clip-path;
+}
+
+.shimmer {
+  background-color: var(--surface);
+  position: relative;
+  overflow: hidden;
+}
+
+.shimmer::after {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.03),
+    transparent
+  );
+  animation: shimmer-anim 1.5s infinite;
+}
+
+@keyframes shimmer-anim {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+.parallax-image {
+  position: absolute;
+  top: -20%;
+  left: 0;
+  width: 100%;
+  height: 140%;
+  object-fit: cover;
+  will-change: transform;
+}
+

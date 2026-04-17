@@ -1,0 +1,179 @@
+.hero-section {
+  height: 100vh;
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  /* Removed padding-bottom: 3rem; from hero-section because we manage it in footer */
+}
+
+.hero-fullscreen-3d {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  z-index: 1;
+  /* behind text but above bg */
+  pointer-events: none;
+  /* Cegah interaksi mouse yang tidak disengaja ke canvas */
+}
+
+.hero-fullscreen-3d canvas {
+  cursor: none !important;
+}
+
+.hero-brutalist-text {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+  /* In front of 3D */
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.giant-text {
+  font-size: clamp(3rem, 12vw, 10vw);
+  font-weight: 900;
+  line-height: 0.9;
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+
+.primary-text {
+  color: var(--accent);
+  z-index: 5;
+  position: relative;
+  margin-right: 10vw;
+  /* Menggeser teks atas "TINARRA" sedikit ke kiri */
+}
+
+.outline-text {
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(255, 255, 255, 1);
+  text-shadow: 0 4px 24px rgba(0, 0, 0, 0.8);
+  mix-blend-mode: difference;
+  z-index: 2;
+  position: relative;
+}
+
+.offset-text {
+  margin-top: -2.5vw;
+  margin-left: 10vw;
+  /* Menggeser teks bawah "STUDIO" sedikit ke kanan */
+}
+
+.title-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 0.5rem;
+  /* Reduced to pull subtext in */
+}
+
+.hero-subtext-wrapper {
+  margin-top: 1rem;
+  /* Added breathing room */
+  position: relative;
+  z-index: 10;
+}
+
+.word-reveal {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.reveal-word {
+  display: inline-block;
+  font-family: var(--font-manrope), sans-serif;
+  font-size: clamp(0.7rem, 0.9vw, 0.9rem);
+  /* Slightly more delicate */
+  font-weight: 600; /* Increased weight for visibility */
+  text-transform: uppercase;
+  letter-spacing: 0.45em;
+  /* Extreme luxury tracking */
+  color: rgba(255, 255, 255, 0.9); /* Increased opacity for legibility */
+  white-space: pre;
+  text-shadow: 0 4px 15px rgba(0, 0, 0, 1); /* Stronger shadow for contrast */
+}
+
+.hero-footer {
+  z-index: 10;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  padding: 4rem 8vw;
+  /* Classic spacing */
+  width: 100%;
+  pointer-events: none;
+  position: absolute;
+  bottom: 0;
+}
+
+.hero-footer::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  /* Blur gradient logic: 4px blur at bottom, 0 at top */
+  background: linear-gradient(to top, rgba(3, 3, 3, 0.95) 0%, rgba(3, 3, 3, 0) 100%);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  mask-image: linear-gradient(to top, black, transparent);
+  -webkit-mask-image: linear-gradient(to top, black, transparent);
+  z-index: -1;
+}
+
+.hero-footer-content {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.hero-scroll-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.scroll-indicator-link {
+  pointer-events: auto;
+  cursor: pointer;
+  display: block;
+  transition: opacity 0.3s ease;
+}
+
+.scroll-indicator-link:hover {
+  opacity: 0.7;
+}
+
+/* Removed .scroll-label */
+
+.scroll-indicator {
+  width: 20px;
+  height: 36px;
+  border: 1.5px solid rgba(255, 255, 255, 0.15);
+  border-radius: 20px;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  background: transparent;
+}
+
+.scroll-dot {
+  width: 5px;
+  height: 5px;
+  background-color: var(--accent);
+  border-radius: 10px; /* Force capsule shape, not oval */
+  margin-top: 7px;
+}

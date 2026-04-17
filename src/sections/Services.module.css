@@ -1,0 +1,232 @@
+.services-section {
+  position: relative;
+  background-color: transparent;
+  /* Removal of overflow/isolation allows the difference blend to see through the backdrop */
+}
+
+.services-content {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 35vh;
+  /* Increased top padding for better separation from TechSpecs */
+  padding: clamp(10rem, 25vh, 25rem) 10vw 15vh;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.services-header {
+  margin-bottom: 25vh;
+  max-width: 1000px;
+  z-index: 2;
+}
+
+.services-subtitle {
+  display: block;
+  font-family: var(--font-jakarta), sans-serif;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.25em;
+  color: var(--accent);
+  margin-bottom: 1.25rem;
+}
+
+.services-title {
+  font-family: var(--font-jakarta), sans-serif;
+  font-size: clamp(2.5rem, 5vw, 4.5rem);
+  font-weight: 800;
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+  color: var(--foreground);
+  text-transform: uppercase;
+  display: flex;
+  flex-direction: column;
+  gap: 0.1em;
+}
+
+.title-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25em;
+}
+
+.outline-text {
+  color: transparent !important;
+  -webkit-text-stroke: 1.5px var(--foreground);
+}
+
+.italic-text {
+  font-style: italic;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+}
+
+.skew-container {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+}
+
+.skew-mask {
+  position: relative;
+  /* Use clip-path instead of overflow: hidden to allow horizontal italic bleed */
+  clip-path: inset(0 -50% 0 -50%);
+  display: inline-flex;
+  vertical-align: bottom;
+  /* Slight padding-bottom to prevent descender clipping (g, y, j, etc.) during rotation */
+  padding-bottom: 0.15em;
+  margin-bottom: -0.15em;
+}
+
+.skew-word {
+  display: inline-block;
+  white-space: pre;
+  transform-origin: left bottom;
+  will-change: transform, opacity;
+}
+
+.skew-space {
+  display: inline-block;
+  white-space: pre;
+}
+
+.grid-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  background-size: 50px 50px;
+  background-image:
+    linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+  z-index: 0;
+}
+
+.svg-container-logic {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 9999; /* Topmost layer for inversion */
+  mix-blend-mode: difference;
+}
+
+.svg-path-logic {
+  fill: none;
+  stroke: var(--accent); /* Back to Yellow */
+  stroke-width: 28px;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  /* Add the glow back to this single unified path */
+  filter: drop-shadow(0 0 10px rgba(223, 255, 0, 0.35));
+}
+
+.service-item {
+  max-width: 650px;
+  width: fit-content;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  z-index: 2;
+}
+
+.right {
+  align-self: flex-end;
+  text-align: left;
+  align-items: flex-start;
+}
+
+.left {
+  align-self: flex-start;
+  text-align: right;
+  align-items: flex-end;
+}
+
+.service-num {
+  font-family: var(--font-jakarta), sans-serif;
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--accent);
+  letter-spacing: 0.15em;
+}
+
+.lusion-container {
+  display: flex;
+  flex-direction: column;
+  width: fit-content;
+  gap: 0;
+  perspective: 1000px;
+  overflow: visible;
+}
+
+.lusion-line-wrapper {
+  display: flex;
+  /* Wrapper must be full width of service-item to allow justify-content to move the mask */
+  width: 100%;
+}
+
+.lusion-mask-top {
+  position: relative;
+  /* Use clip-path to allow horizontal overflow (no clipping on G, etc) while hiding vertical */
+  clip-path: inset(0 -100% 0 -100%);
+  margin-bottom: -1px;
+  width: fit-content;
+}
+
+.lusion-mask-bottom {
+  position: relative;
+  clip-path: inset(0 -100% 0 -100%);
+  width: fit-content;
+  margin-top: -1px;
+}
+
+.lusion-row {
+  display: flex;
+  flex-wrap: nowrap;
+}
+
+.lusion-word {
+  display: inline-block;
+  font-family: var(--font-jakarta), var(--font-syne), sans-serif;
+  font-size: clamp(2.5rem, 4.5vw, 4.5rem);
+  font-weight: 600;
+  line-height: 1.0;
+  letter-spacing: -0.03em;
+  color: var(--foreground);
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.service-desc-wrapper {
+  margin-top: 1rem;
+}
+
+.service-desc {
+  font-family: var(--font-manrope), sans-serif;
+  font-size: 1.15rem;
+  line-height: 1.6;
+  color: var(--muted);
+}
+
+@media (max-width: 768px) {
+  .services-content {
+    gap: 25vh;
+    padding: 10vh 5vw;
+  }
+
+  .left,
+  .right {
+    align-self: flex-start;
+  }
+
+  .service-item {
+    max-width: 100%;
+  }
+}

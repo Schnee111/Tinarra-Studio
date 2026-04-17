@@ -1,0 +1,62 @@
+"use client";
+
+import { useRef } from "react";
+import { motion, useScroll, useTransform } from "framer-motion";
+import styles from "./Manifesto.module.css";
+
+const text = "We turn digital polygons into physical realities. Precision-crafted in our local micro-factory.";
+
+export default function Manifesto({ textColor, mutedColor }: { textColor?: any, mutedColor?: any }) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start 85%", "end 50%"]
+  });
+
+  const words = text.split(" ");
+
+  return (
+    <section className={styles['manifesto-section']} ref={containerRef} id="story">
+      <h2 className={styles['manifesto-text']}>
+        {words.map((word, i) => {
+          const start = i / (words.length + 5); 
+          const end = (i + 5) / (words.length + 5); 
+          
+          return (
+            <Word 
+              key={i} 
+              word={word} 
+              progress={scrollYProgress} 
+              range={[start, end]}
+              activeColor={textColor}
+              inactiveColor={mutedColor}
+            />
+          );
+        })}
+      </h2>
+    </section>
+  );
+}
+
+function Word({ word, progress, range, activeColor, inactiveColor }: { word: string, progress: any, range: [number, number], activeColor?: any, inactiveColor?: any }) {
+  // Fix: Move the 'reveal' logic to Opacity and Blur, letting the Prop handle the base color.
+  // This avoids the 'MotionValue inside useTransform' limitation that caused the text not to change.
+  const revealProgress = useTransform(progress, range, [0, 1]);
+  const opacity = useTransform(revealProgress, [0, 1], [0.1, 1]);
+  const blurVal = useTransform(revealProgress, [0, 1], [4, 0]);
+  const filter = useTransform(blurVal, (v) => `blur(${v}px)`);
+
+  // We use the activeColor (which is a MotionValue representing the global white/black state)
+  // as the base color for the text.
+  return (
+    <span className={styles['word-wrapper']}>
+      <motion.span 
+        className={styles['char']} 
+        style={{ color: activeColor, opacity, filter }}
+      >
+        {word}
+      </motion.span>
+    </span>
+  );
+}

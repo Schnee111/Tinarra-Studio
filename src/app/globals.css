@@ -1,49 +1,95 @@
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #030303;
+  --surface: #0c0c0c;
+  --foreground: #e8e8e6;
+  --muted: rgba(232, 232, 230, 0.38);
+  --label: rgba(232, 232, 230, 0.22);
+  --accent: #dfff00;
+  --border: rgba(255, 255, 255, 0.07);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
-html {
-  height: 100%;
-}
-
-html,
-body {
-  max-width: 100vw;
-  overflow-x: hidden;
-}
-
-body {
-  min-height: 100%;
-  display: flex;
-  flex-direction: column;
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-* {
+*, *::before, *::after {
   box-sizing: border-box;
-  padding: 0;
-  margin: 0;
+  margin: 0; padding: 0;
 }
 
-a {
-  color: inherit;
-  text-decoration: none;
+/* Base Lenis Smooth Scroll CSS setup */
+html.lenis, html.lenis body { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+.lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
+.lenis.lenis-stopped { overflow: hidden; }
+.lenis.lenis-smooth iframe { pointer-events: none; }
+
+html, body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-manrope), sans-serif;
+  cursor: none;
+  overflow-x: clip;
+  width: 100%;
+  max-width: 100vw;
+  min-height: 100vh;
 }
 
-@media (prefers-color-scheme: dark) {
-  html {
-    color-scheme: dark;
+/* Global Persistent Viewport Bottom Fog (Mobile Safe Default) */
+body::after {
+  content: "";
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: clamp(100px, 20vh, 200px);
+  background: var(--fog-color, linear-gradient(to top, rgba(10, 10, 9, 0.75) 0%, transparent 100%));
+  pointer-events: none;
+  z-index: 99999;
+}
+
+/* Enable heavy glass blur rendering ONLY on stronger Desktop/Tablet environments */
+@media (min-width: 768px) {
+  body::after {
+    backdrop-filter: blur(8px);
+    -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 90%);
+    mask-image: linear-gradient(to top, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 90%);
   }
+}
+
+::-webkit-scrollbar { display: none; }
+
+a, button { cursor: none !important; }
+
+/* Cursors */
+
+.cursor-dot, .cursor-outline {
+  position: fixed; top: 0; left: 0; pointer-events: none; z-index: 9999; border-radius: 50%;
+  transform: translate(-50%, -50%);
+}
+.cursor-dot { width: 8px; height: 8px; background-color: var(--accent); }
+.cursor-outline { width: 40px; height: 40px; border: 1px solid var(--accent); }
+
+/* Shimmer Loading Effect */
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+.shimmer {
+  position: relative;
+  overflow: hidden;
+  background-color: var(--surface);
+}
+
+.shimmer::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.03),
+    transparent
+  );
+  animation: shimmer 1.5s infinite;
 }

@@ -1,0 +1,31 @@
+.manifesto-section {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 30vh 8vw; /* More breathing room */
+  background-color: transparent;
+}
+
+.manifesto-text {
+  font-family: var(--font-syne), sans-serif;
+  font-size: clamp(2.5rem, 5vw, 6rem);
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: var(--muted);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3em 0.3em;
+  max-width: 1400px;
+}
+
+.word-wrapper {
+  position: relative;
+  display: inline-flex;
+}
+
+.char {
+  display: inline-block;
+  will-change: color;
+}
