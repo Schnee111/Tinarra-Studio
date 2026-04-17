@@ -1,15 +1,14 @@
 .custom-scrollbar-track {
   position: fixed;
   right: 2.5vw;
-  top: 50%;
+  top: 50svh;
   transform: translateY(-50%);
-  height: 30vh;
+  height: clamp(150px, 30svh, 300px); 
   width: 3px;
   background: rgba(255, 255, 255, 0.1);
   border-radius: 10px;
   z-index: 10002;
   pointer-events: none;
-  /* Premium adaptive magic: Inverts color based on bg */
   mix-blend-mode: difference;
 }
 
@@ -17,8 +16,8 @@
   position: absolute;
   left: 0px;
   width: 3px;
-  height: 8vh;
+  /* Gunakan px atau svh */
+  height: clamp(40px, 8svh, 80px); 
   background: rgba(255, 255, 255, 0.8);
   border-radius: 10px;
 }
-
