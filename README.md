@@ -1,36 +1,47 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Tinarra Studio
 
-## Getting Started
+A high-end, brutalist-inspired creative studio platform specializing in 3D printing, custom design, and cinematic digital experiences. Built with a focus on editorial aesthetics and immersive scrollytelling.
 
-First, run the development server:
+## 🎨 Visual Identity
+- **Aesthetic**: Brutalist-Elegant / High-End Editorial.
+- **Micro-interactions**: Kinetic typography, grain overlays, and fluid transitions.
+- **Experience**: Seamless scrollytelling with precision-timed animations.
 
+## 🚀 Tech Stack
+- **Framework**: [Next.js 16](https://nextjs.org/) (App Router)
+- **Animation**: [Framer Motion](https://www.framer.com/motion/) & CSS Modules
+- **3D Graphics**: [React Three Fiber](https://r3f.docs.pmnd.rs/) & [Three.js](https://threejs.org/)
+- **Scrolling**: [Lenis Scroll](https://lenis.darkroom.engineering/) for high-performance precision scrolling
+- **Styling**: Vanilla CSS Modules for granular performance control
+- **Type**: [TypeScript](https://www.typescriptlang.org/) for robust architecture
+
+## ✨ Core Features
+- **Cinematic Preloader**: Minimalist sequence synchronizing 3D assets with UI readiness.
+- **Dynamic 3D Backgrounds**: Real-time GLSL noise and liquid simulations.
+- **Kinetic Typography**: "Lusion-style" per-line and per-character text reveals.
+- **Stacked Card Gallery**: Sophisticated parallax-driven project showcases.
+- **Global Color Orchestration**: Context-aware color shifts between page sections.
+
+## 🛠️ Getting Started
+
+### Installation
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Development
+```bash
+npm run dev
+```
+Open [http://localhost:3000](http://localhost:3000) to view the development build.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 📂 Project Structure
+- `/src/app`: Root layouts and page definitions.
+- `/src/components`: Reusable UI components (Preloader, Navigation, etc.).
+- `/src/sections`: Main page chapters (Hero, Manifesto, Gallery, Services).
+- `/src/hooks`: Custom React hooks for scroll and window logic.
+- `/public`: Static assets and 3D models.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+*Handcrafted by Tinarra Studio*
