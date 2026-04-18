@@ -2,6 +2,8 @@
 
 import { useRef, useState, useEffect, useMemo } from "react";
 import { motion, useScroll, useTransform, useSpring, useInView } from "framer-motion";
+import Filament from "./components/Filament-realistic";
+import Nozzle from "./components/Nozzle";
 import styles from "./Services.module.css";
 
 const services = [
@@ -66,29 +68,30 @@ export default function Services() {
     };
   }, []);
 
+  const isMobile = svgSize.width < 768;
+  const startX = isMobile ? 80 : 160;
+
   const generatePath = () => {
     if (svgSize.width === 0 || svgSize.height === 0) return "";
 
     const w = svgSize.width;
     const h = svgSize.height;
-    const isMobile = svgSize.width < 768;
-
-    // if (isMobile) {
-    //   // S-Curve vertical path on the left for stacked mobile items
-    //   return `M 12 ${h * 0.15}
-    //           Q 40 ${h * 0.35} 12 ${h * 0.55}
-    //           T 12 ${h * 0.98}`;
-    // }
 
     // Adjusted proportions for desktop zig-zag
-    return `M 0 ${h * 0.25}
-            C ${w * 0.4} ${h * 0.15} ${w * 0.95} ${h * 0.25} ${w * 0.82} ${h * 0.40} 
-            S ${w * 0.18} ${h * 0.52} ${w * 0.2} ${h * 0.67}
-            S ${w * 0.9} ${h * 0.7} ${w * 0.77} ${h * 0.89}
-            S ${w * 1.4} ${h * 1} ${w * 0.6} ${h * 1.4}`;
+    return `M ${startX} ${h * 0.3}
+            C ${w * 0.4} ${h * 0.2} ${w * 0.95} ${h * 0.3} ${w * 0.82} ${h * 0.45} 
+            S ${w * 0.18} ${h * 0.57} ${w * 0.2} ${h * 0.72}
+            S ${w * 0.9} ${h * 0.8} ${w * 0.77} ${h * 0.99}
+            S ${w * 1.4} ${h * 1.1} ${w * 0.6} ${h * 1.5}`;
   };
 
-  const isMobile = svgSize.width < 768;
+  const initialAngle = useMemo(() => {
+    if (svgSize.width === 0 || svgSize.height === 0) return 0;
+    const dy = (svgSize.height * 0.15) - (svgSize.height * 0.25);
+    const dx = (svgSize.width * 0.4) - startX;
+    const angleRadians = Math.atan2(dy, dx);
+    return angleRadians * (180 / Math.PI);
+  }, [svgSize, startX]);
 
   return (
     <section className={styles['services-section']} ref={containerRef} id="services">
@@ -164,23 +167,27 @@ export default function Services() {
       {/* Logic Layer: Placed LAST in DOM with high z-index and difference blend mode */}
       <motion.div 
         className={styles['svg-container-logic']}
-        style={{ opacity: pathOpacity }}
+        style={{ opacity: pathOpacity } as any}
       >
         <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" style={{ overflow: 'visible' }}>
           {isReady && svgSize.width > 0 && (
-            <motion.path
-              d={generatePath()}
-              className={styles['svg-path-logic']}
-              style={{ pathLength }}
-              initial={{ pathLength: 0 }}
-              transition={{ 
-                // CRITICAL: Disable morphing for the 'd' attribute to prevent ghost paths
-                // only allow the spring to control the pathLength.
-                d: { duration: 0 } 
-              }}
+            <Filament 
+              pathLength={pathLength} 
+              generatePath={generatePath} 
+              isReady={isReady} 
+              isMobile={isMobile}
             />
           )}
         </svg>
+
+        {/* The Printing Nozzle Head */}
+        <Nozzle 
+          initialAngle={initialAngle} 
+          startX={startX} 
+          top={svgSize.height * 0.3}
+          isReady={isReady} 
+          svgSize={svgSize} 
+        />
       </motion.div>
     </section>
   );
@@ -219,7 +226,7 @@ function LusionTitle({ line1, line2, reverse = false, isMobile = false }: { line
   return (
     <div ref={detRef} className={styles['lusion-container']}>
       {/* Line 1 */}
-      <motion.div layout className={styles['lusion-line-wrapper']} style={{ justifyContent: currentAlign }} transition={{ layout: { duration: 1.2, ease: [0.65, 0, 0.35, 1] } }}>
+      <motion.div layout className={styles['lusion-line-wrapper']} style={{ justifyContent: currentAlign } as any} transition={{ layout: { duration: 1.2, ease: [0.65, 0, 0.35, 1] } }}>
         <motion.div layout className={styles['lusion-mask-top']}>
           <motion.div layout className={styles['lusion-row']}>
             {words1.map((word, i) => (
@@ -239,7 +246,7 @@ function LusionTitle({ line1, line2, reverse = false, isMobile = false }: { line
       </motion.div>
 
       {/* Line 2 STAYS STILL at its final destination */}
-      <motion.div layout className={styles['lusion-line-wrapper']} style={{ justifyContent: endAlign }} transition={{ layout: { duration: 1.2, ease: [0.65, 0, 0.35, 1] } }}>
+      <motion.div layout className={styles['lusion-line-wrapper']} style={{ justifyContent: endAlign } as any} transition={{ layout: { duration: 1.2, ease: [0.65, 0, 0.35, 1] } }}>
         <motion.div layout className={styles['lusion-mask-bottom']}>
           <motion.div layout className={styles['lusion-row']}>
             {words2.map((word, i) => (
@@ -291,7 +298,7 @@ function ServiceDescription({ text, isMobile = false }: { text: string, isMobile
               transition: { duration: 0.5, ease: "easeOut" } 
             }
           }}
-          style={{ display: "inline-block", marginRight: "0.35em" }}
+          style={{ display: "inline-block", marginRight: "0.35em" } as any}
         >
           {word}
         </motion.span>

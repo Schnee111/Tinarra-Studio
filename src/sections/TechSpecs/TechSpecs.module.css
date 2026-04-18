@@ -2,7 +2,7 @@
   position: relative;
   min-height: 100vh;
   /* Increased top padding for better breathing room from previous section */
-  padding: clamp(10rem, 15vh, 15rem) 8vw clamp(5rem, 8vh, 8rem);
+  padding: clamp(15rem, 25vh, 25rem) 8vw clamp(10rem, 15vh, 15rem);
   background-color: transparent;
   display: flex;
   align-items: center;

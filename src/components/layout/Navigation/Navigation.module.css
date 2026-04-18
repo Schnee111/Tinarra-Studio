@@ -8,11 +8,10 @@
   width: 100%;
   z-index: 99999;
   padding: 1.5rem 6vw;
-  pointer-events: none; /* Biarkan klik tembus ke bawah jika bukan link */
-  
-  /* RAHASIA INVERSE: Hanya di sini! */
+  pointer-events: none;  
   mix-blend-mode: difference;
   color: #ffffff;
+  transition: color 0.1s;
 }
 
 @media (min-width: 1024px) {
@@ -25,42 +24,72 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  max-width: 1280px;
+  max-width: 1400px;
   margin: 0 auto;
 }
 
 .nav-inner > * {
-  pointer-events: auto; /* Aktifkan klik hanya untuk anak-anaknya */
+  pointer-events: auto;
 }
 
 .logo {
   font-family: var(--font-syne), sans-serif;
   font-weight: 700;
-  font-size: 1.1rem;
-  letter-spacing: 0.1em;
+  font-size: 1.15rem;
+  letter-spacing: 0.15em;
   text-transform: uppercase;
-  color: inherit; /* Mewarisi warna inverse dari container */
+  color: inherit;
   text-decoration: none;
+  z-index: 1000;
+  flex-shrink: 0;
+  transition: opacity 0.2s ease; /* Snappier Handoff */
 }
 
-/* ========================================= */
-/* 2. DESKTOP NAVIGATION                     */
-/* ========================================= */
+.logo.faded {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.desktop-links-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+}
+
 .desktop-links {
   display: none;
   align-items: center;
   gap: 2.5rem;
 }
 
+@media (min-width: 1024px) {
+  .desktop-links {
+    display: flex;
+  }
+}
+
+.mobile-menu-toggle {
+  display: flex;
+  align-items: center;
+}
+
+@media (min-width: 1024px) {
+  .mobile-menu-toggle {
+    display: none;
+  }
+}
+
 .desktop-links a:not(.desktop-cta) {
-  font-family: var(--font-manrope), sans-serif;
+  display: inline-block; /* Ensure padding/spacing works correctly */
+  font-family: var(--font-jakarta), sans-serif;
   font-size: 0.8rem;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.2em;
+  letter-spacing: 0.15em;
   color: inherit;
   text-decoration: none;
   position: relative;
+  line-height: 1.5; /* Vertical breathing room to prevent clipping */
 }
 
 .desktop-links a:not(.desktop-cta)::after {
@@ -73,7 +102,7 @@
   background-color: currentColor;
   transform: scaleX(0);
   transform-origin: right;
-  transition: transform 0.6s cubic-bezier(0.19, 1, 0.22, 1);
+  transition: transform 0.75s cubic-bezier(0.19, 1, 0.22, 1);
 }
 
 .desktop-links a:not(.desktop-cta):hover::after {
@@ -82,25 +111,28 @@
 }
 
 .desktop-cta {
-  font-family: var(--font-manrope), sans-serif;
-  font-size: 0.7rem;
-  font-weight: 600;
+  mix-blend-mode: normal; /* Isolate from parent difference mode for stability */
+  font-family: var(--font-jakarta), sans-serif;
+  font-size: 0.75rem;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.2em;
-  color: inherit;
-  border: 1px solid currentColor;
+  letter-spacing: 0.1em;
+  color: #ffffff;
+  background: #000000;
+  border: 1px solid #ffffff;
   border-radius: 999px;
-  padding: 0.6rem 1.4rem;
-  transition: all 0.3s ease;
+  padding: 0.6rem 1.6rem;
+  transition: all 0.4s cubic-bezier(0.19, 1, 0.22, 1);
   text-decoration: none;
 }
 
 .desktop-cta:hover {
-  background: currentColor;
-  color: #000;
+  background: #ffffff;
+  color: #000000;
+  border-color: #ffffff;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 1024px) {
   .desktop-links {
     display: flex;
   }
@@ -110,36 +142,45 @@
 /* 3. MOBILE HAMBURGER BUTTON                */
 /* ========================================= */
 .hamburger {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: flex-end;
-  gap: 6px;
   width: 40px;
   height: 40px;
   background: transparent;
   border: none;
   cursor: pointer;
+  padding: 0;
+  position: relative;
 }
 
 .line {
+  position: absolute;
+  right: 0;
+  top: 50%;
   display: block;
   height: 2px;
   background-color: currentColor;
-  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), width 0.4s;
+  transition: all 0.5s cubic-bezier(0.19, 1, 0.22, 1);
   border-radius: 2px;
+  transform-origin: center;
 }
 
-.line:first-child { width: 32px; }
-.line:last-child { width: 20px; }
+/* Closed State Positions */
+.line:first-child { 
+  width: 32px; 
+  transform: translateY(-4px); 
+}
+.line:last-child { 
+  width: 22px; 
+  transform: translateY(4px); 
+}
 
+/* Open State (X) */
 .hamburger.open .line:first-child {
-  transform: translateY(4px) rotate(45deg);
+  transform: translateY(0) rotate(45deg);
   width: 28px;
 }
 
 .hamburger.open .line:last-child {
-  transform: translateY(-4px) rotate(-45deg);
+  transform: translateY(0) rotate(-45deg);
   width: 28px;
 }
 
@@ -152,20 +193,7 @@
 /* ========================================= */
 /* 4. FULLSCREEN MOBILE OVERLAY              */
 /* ========================================= */
-.mobile-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100dvh;
-  /* Hitam murni agar mix-blend-mode logo & hamburger menjadi putih cerah saat dibuka */
-  background-color: #000000; 
-  z-index: 99998; /* Berada tepat DI BAWAH navbar header */
-  display: flex;
-  flex-direction: column;
-  padding: 6rem 6vw 3rem;
-  pointer-events: auto;
-}
+/* Styles cleaned up to avoid mobile conflicts */
 
 .mobile-content {
   flex: 1;

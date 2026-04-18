@@ -1,0 +1,163 @@
+.cta-section {
+  position: relative;
+  width: 100vw;
+  /* Diubah dari height: 100vh menjadi min-height yang lebih proporsional */
+  min-height: 60vh;
+  padding: 35vh 0; 
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: transparent;
+}
+
+.marquee-velocity-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4vh;
+  opacity: 0.08;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.parallax {
+  overflow: hidden;
+  letter-spacing: -2px;
+  line-height: 0.9;
+  margin: 0;
+  white-space: nowrap;
+  display: flex;
+  flex-wrap: nowrap;
+}
+
+.scroller {
+  font-family: var(--font-jakarta), var(--font-syne), sans-serif;
+  font-weight: 800;
+  text-transform: uppercase;
+  font-size: clamp(8rem, 20vw, 30rem);
+  display: flex;
+  white-space: nowrap;
+  will-change: transform;
+  transform: translateZ(0); 
+}
+
+.scroller span {
+  display: block;
+  margin-right: 5vw;
+  color: rgba(255, 255, 255, 0.02); 
+  -webkit-text-stroke: 1.5px var(--foreground); 
+}
+
+.word {
+  display: inline-block;
+  white-space: nowrap;
+}
+
+.char {
+  display: inline-block;
+  will-change: transform, opacity, filter;
+}
+
+.cta-overlay {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  text-align: center;
+}
+
+.cta-subtitle {
+  font-family: var(--font-manrope), sans-serif;
+  font-size: 0.9rem;
+  font-weight: 600;
+  letter-spacing: 0.35em;
+  color: var(--accent);
+  text-transform: uppercase;
+  margin-bottom: 0.5rem;
+}
+
+.cta-button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+  text-decoration: none;
+  color: var(--foreground);
+  cursor: pointer;
+  transition: color 0.4s ease;
+}
+
+.btn-float-container {
+  font-family: var(--font-jakarta), var(--font-syne), sans-serif;
+  font-size: clamp(2.5rem, 6.5vw, 6.5rem);
+  font-weight: 600;
+  line-height: 1.3;
+  text-transform: uppercase;
+  white-space: nowrap;
+  overflow: visible;
+  display: flex;
+  gap: 0.05em;
+}
+
+.cta-button:hover {
+  color: var(--accent);
+}
+
+.btn-icon {
+  width: clamp(4rem, 8vw, 8rem);
+  height: clamp(4rem, 8vw, 8rem);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btn-icon svg {
+  width: 35%;
+  height: 35%;
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.cta-button:hover .btn-icon {
+  background-color: var(--accent);
+  border-color: var(--accent);
+  color: var(--background);
+}
+
+.cta-button:hover .btn-icon svg {
+  transform: rotate(45deg);
+}
+
+@media (max-width: 768px) {
+  .cta-section {
+    min-height: 45vh; /* Kurangi tinggi di mobile */
+    height: auto;
+    padding: 10vh 5vw;
+  }
+  
+  .scroller {
+    font-size: clamp(5rem, 40vw, 15rem);
+  }
+  
+  .marquee-velocity-bg {
+    gap: 1vh;
+    opacity: 0.05;
+  }
+
+  .btn-float-container {
+    font-size: clamp(2rem, 10vw, 3rem);
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+}

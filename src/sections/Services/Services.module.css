@@ -11,7 +11,7 @@
   flex-direction: column;
   gap: 35vh;
   /* Increased top padding for better separation from TechSpecs */
-  padding: clamp(10rem, 25vh, 25rem) 10vw 15vh;
+  padding: clamp(15rem, 35vh, 35rem) 10vw 15vh;
   max-width: 1400px;
   margin: 0 auto;
 }
@@ -102,8 +102,8 @@
   pointer-events: none;
   background-size: 50px 50px;
   background-image:
-    linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+    linear-gradient(to right, rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
   z-index: 0;
 }
 
@@ -114,18 +114,20 @@
   width: 100%;
   height: 100%;
   pointer-events: none;
-  z-index: 9999; /* Topmost layer for inversion */
+  z-index: 9999;
+  /* Topmost layer for inversion */
   mix-blend-mode: difference;
 }
 
 .svg-path-logic {
   fill: none;
-  stroke: var(--accent); /* Back to Yellow */
-  stroke-width: 28px;
+  stroke: var(--accent);
+  /* Back to Yellow */
+  stroke-width: 30px;
   stroke-linecap: round;
   stroke-linejoin: round;
   /* Add the glow back to this single unified path */
-  filter: drop-shadow(0 0 10px rgba(223, 255, 0, 0.35));
+  /* filter: drop-shadow(0 0 10px rgba(223, 255, 0, 0.1)); */
 }
 
 .service-item {
@@ -215,6 +217,27 @@
   color: var(--muted);
 }
 
+/* --- THE NOZZLE TIP --- */
+.nozzle-tip {
+  position: absolute;
+  top: 25%;
+  
+  /* Ukuran diperlebar mengikuti rasio baru (200x120 SVG) -> Skala 1.5x */
+  width: 300px; 
+  height: 180px;
+  
+  /* KALKULASI POROS BARU:
+     Titik ujung moncong SVG (185, 60) dikalikan skala 1.5
+     X = 277.5px, Y = 90px */
+  margin-left: -277.5px;
+  margin-top: -90px; 
+  transform-origin: 277.5px 90px;
+  
+  z-index: 10000;
+  pointer-events: none;
+  filter: drop-shadow(10px 10px 20px rgba(0, 0, 0, 0.8));
+}
+
 @media (max-width: 768px) {
   .services-content {
     gap: 15vh;
@@ -250,13 +273,22 @@
     line-height: 1.5;
   }
 
+  .nozzle-tip {
+    /* Skala Layar HP (1:1 dengan rasio SVG) */
+    width: 200px;
+    height: 120px;
+    margin-left: -185px;
+    margin-top: -60px;
+    transform-origin: 185px 60px;
+  }
+
   .svg-container-logic {
     display: block;
     opacity: 0.5;
   }
 
   .svg-path-logic {
-    stroke-width: 16px;
+    stroke-width: 18px;
     filter: none;
   }
 }
