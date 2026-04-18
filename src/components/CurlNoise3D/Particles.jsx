@@ -59,7 +59,9 @@ export function Particles({ speed = 100, fov = 20, aperture = 1.8, focus = 5.1, 
     renderRef.current.uniforms.uBlur.value = THREE.MathUtils.lerp(renderRef.current.uniforms.uBlur.value, (5.6 - aperture) * 9, 0.1)
     simRef.current.uniforms.uTime.value = state.clock.elapsedTime * speed
     simRef.current.uniforms.uCurlFreq.value = THREE.MathUtils.lerp(simRef.current.uniforms.uCurlFreq.value, curl, 0.1)
-    simRef.current.uniforms.uScroll.value = THREE.MathUtils.lerp(simRef.current.uniforms.uScroll.value, scroll, 0.1)
+    // Extract value if scroll is a MotionValue, otherwise use as is
+    const scrollValue = (scroll && typeof scroll.get === 'function') ? scroll.get() : scroll;
+    simRef.current.uniforms.uScroll.value = THREE.MathUtils.lerp(simRef.current.uniforms.uScroll.value, scrollValue, 0.1)
     
     // Sinkronisasi posisi kamera untuk kalkulasi raycast shader 3D
     simRef.current.uniforms.uCameraPos.value.copy(state.camera.position)
