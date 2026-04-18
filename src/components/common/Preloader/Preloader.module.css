@@ -1,0 +1,54 @@
+.preloader-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 100000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #000000; /* Deep Tinarra black */
+  color: #fff;
+  overflow: hidden;
+  cursor: wait;
+  will-change: transform, opacity, filter;
+}
+
+.preloader-content {
+  position: relative; /* Ditambahkan agar angka bisa absolut di tengah */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ring-svg {
+  width: clamp(150px, 20vw, 260px);
+  height: clamp(150px, 20vw, 260px);
+}
+
+/* --- TYPOGRAPHY ANGKA --- */
+.numeric-wrapper {
+  position: absolute;
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.progress-number {
+  font-family: var(--font-jakarta), sans-serif;
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  font-weight: 700;
+  color: #ffffff;
+  font-variant-numeric: tabular-nums; /* Mencegah teks bergoyang (jitter) */
+  line-height: 1;
+}
+
+.percent-symbol {
+  font-family: var(--font-jakarta), sans-serif;
+  font-size: clamp(1rem, 2vw, 1.5rem);
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.4);
+  margin-left: 4px;
+}
