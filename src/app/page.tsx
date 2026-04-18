@@ -2,15 +2,15 @@
 
 import { useRef, useEffect } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
-import Navigation from "@/components/Navigation";
-import Footer from "@/components/Footer";
-import Hero from "@/sections/Hero";
-import StackedSection from "@/components/StackedSection";
-import Manifesto from "@/sections/Manifesto";
-import FeaturedGallery from "@/sections/FeaturedGallery";
-import TechSpecs from "@/sections/TechSpecs";
-import Services from "@/sections/Services";
-import Marquee from "@/sections/Marquee";
+import Navigation from "@/components/layout/Navigation/Navigation";
+import Footer from "@/components/layout/Footer/Footer";
+import Hero from "@/sections/Hero/Hero";
+import Manifesto from "@/sections/Manifesto/Manifesto";
+import FeaturedGallery from "@/sections/FeaturedGallery/FeaturedGallery";
+import TechSpecs from "@/sections/TechSpecs/TechSpecs";
+import Services from "@/sections/Services/Services";
+import Marquee from "@/sections/Marquee/Marquee";
+import ScrollFog from "@/components/layout/ScrollFog/ScrollFog";
 
 export default function Home() {
   const whiteZoneRef = useRef<HTMLDivElement>(null);
@@ -49,20 +49,19 @@ export default function Home() {
     ["rgba(255, 255, 255, 0.6)", "rgba(0, 0, 0, 0.6)", "rgba(0, 0, 0, 0.6)", "rgba(255, 255, 255, 0.6)"]
   );
 
-  // TRANSISI WARNA AKSEN: Lime -> Cobalt Blue -> Cobalt Blue -> Lime
+  // TRANSISI WARNA AKSEN: Lime -> Dark Neutral -> Dark Neutral -> Lime
   const accentColor = useTransform(
     scrollYProgress,
     [0, 0.25, 0.75, 1],
-    ["#dfff00", "#111111", "#111111", "#dfff00"]
+    ["#dfff00", "#0a0a0a", "#0a0a0a", "#dfff00"]
   );
 
   return (
     <main style={{ position: "relative" }}>
       <Navigation />
+      <ScrollFog />
 
-      <StackedSection zIndex={20} color="#030303">
-        <Hero />
-      </StackedSection>
+      <Hero />
 
       {/* Main Orchestrated Container */}
       <motion.div
@@ -74,7 +73,7 @@ export default function Home() {
           borderTopRightRadius: "40px",
           willChange: "background-color",
           backfaceVisibility: "hidden"
-        }}
+        } as any}
       >
         <div style={{ position: "relative", zIndex: 20 }}>
           <Manifesto textColor={textColor} mutedColor={mutedColor} />
@@ -87,7 +86,7 @@ export default function Home() {
             <FeaturedGallery textColor={textColor} accentColor={accentColor} />
           </section>
 
-          <TechSpecs textColor={textColor} mutedColor={secondaryTextColor} />
+          <TechSpecs textColor={textColor} mutedColor={secondaryTextColor} accentColor={accentColor} />
         </div>
 
         <Services />

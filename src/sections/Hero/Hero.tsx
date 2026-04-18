@@ -1,18 +1,17 @@
 "use client";
 
-import { useRef, useState, useEffect, MouseEvent } from "react";
+import { useRef, useState, useEffect, MouseEvent, Suspense } from "react";
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls, CameraShake } from "@react-three/drei";
 import { useScroll, useTransform, motion, useMotionValueEvent } from "framer-motion";
 import { useLenis } from "lenis/react";
-import { Particles } from "../components/CurlNoise3D/Particles";
+import { Particles } from "@/components/canvas/CurlNoise3D/Particles";
 import styles from "./Hero.module.css";
 
 export default function Hero() {
   const containerRef = useRef<HTMLDivElement>(null);
   const [particleSize, setParticleSize] = useState(256);
   const [isCanvasActive, setIsCanvasActive] = useState(true);
-  const [scrollVal, setScrollVal] = useState(0);
 
   useEffect(() => {
     // Determine particle count based on device heuristics
@@ -55,10 +54,6 @@ export default function Hero() {
 
   const { scrollYProgress } = useScroll({ target: containerRef, offset: ["start start", "end start"] });
   
-  useMotionValueEvent(scrollYProgress, "change", (latest) => {
-    setScrollVal(latest);
-  });
-  
   // Depth & Divergence Transforms
   const scale = useTransform(scrollYProgress, [0, 1], [1, 1.3]);
   const y1 = useTransform(scrollYProgress, [0, 1], [0, -150]);
@@ -88,7 +83,7 @@ export default function Hero() {
       className={styles['hero-section']} 
       id="home" 
       ref={containerRef}
-      style={{ opacity: globalOpacity }}
+      style={{ opacity: globalOpacity } as any}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 1.5, ease: "easeOut" }}
@@ -102,16 +97,19 @@ export default function Hero() {
         >
           <color attach="background" args={['#030303']} />
           <ambientLight intensity={1} />
-          <Particles 
-            speed={0.1} 
-            fov={150} 
-            aperture={4.5} 
-            focus={3.1} 
-            curl={0.25} 
-            size={particleSize} 
-            scroll={isMobile ? 0 : scrollVal} // Prevent heavy divergence spread on mobile during scroll
-            interactive={!isMobile} // Disable scattering interaction on mobile
-          />
+          <Suspense fallback={null}>
+            <Particles 
+              speed={0.1} 
+              fov={150} 
+              aperture={4.5} 
+              focus={3.1} 
+              curl={0.25} 
+              size={particleSize} 
+              scroll={(isMobile ? 0 : scrollYProgress) as any}
+              interactive={!isMobile} 
+            />
+          </Suspense>
+          
           {!isMobile && (
             <OrbitControls 
               makeDefault 
@@ -132,7 +130,7 @@ export default function Hero() {
           opacity: isMobile ? 1 : opacity, 
           scale: isMobile ? 1 : scale, 
           filter: isMobile ? "none" : blur 
-        }}
+        } as any}
       >
         <div className={styles['title-group']}>
           <motion.h1 
@@ -165,14 +163,14 @@ export default function Hero() {
           style={{ 
             opacity: isMobile ? 1 : footerOpacity, 
             filter: isMobile ? "none" : footerBlur 
-          }}
+          } as any}
         >
           <div className={styles['hero-scroll-wrapper']}>
             <a href="#story" onClick={handleScroll} className={styles['scroll-indicator-link']}>
               <div className={styles['scroll-indicator']}>
                 <motion.div 
                   className={styles['scroll-dot']}
-                  style={{ transformOrigin: "top" }}
+                  style={{ transformOrigin: "top" } as any}
                   animate={{ 
                     height: [6, 20, 6, 6], // Natural pill stretch
                     y: [0, 0, 14, 0],      // Catch-up effect

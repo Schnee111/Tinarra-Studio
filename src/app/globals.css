@@ -69,26 +69,10 @@ body::-webkit-scrollbar {
   }
 }
 
-/* Global Persistent Viewport Bottom Fog (Mobile Safe Default) */
-body::after {
-  content: "";
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: clamp(60px, 15vh, 120px); /* Smaller on mobile */
-  background: var(--fog-color, linear-gradient(to top, rgba(3, 3, 3, 0.8) 0%, transparent 100%));
-  pointer-events: none;
-  z-index: 99999;
-}
-
-/* Enable heavy glass blur rendering ONLY on stronger Desktop/Tablet environments */
-@media (min-width: 1024px) {
+/* Global Persistent Viewport Bottom Fog Logic moved to ScrollFog.tsx */
+@media (max-width: 1024px) {
   body::after {
-    height: clamp(100px, 20vh, 200px);
-    backdrop-filter: blur(8px);
-    -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 90%);
-    mask-image: linear-gradient(to top, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 90%);
+    display: none !important;
   }
 }
 

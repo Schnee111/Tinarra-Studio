@@ -24,10 +24,10 @@ export const metadata: Metadata = {
   description: "Creative 3D printing studio offering custom 3D prints, high-quality keychains, and modeling services.",
 };
 
-import CustomCursor from "@/components/CustomCursor";
-import LenisProvider from "@/components/LenisProvider";
-import Preloader from "@/components/Preloader";
-import CustomScrollbar from "@/components/CustomScrollbar";
+import CustomCursor from "@/components/common/CustomCursor/CustomCursor";
+import LenisProvider from "@/components/layout/LenisProvider/LenisProvider";
+import Preloader from "@/components/common/Preloader/Preloader";
+import CustomScrollbar from "@/components/ui/CustomScrollbar/CustomScrollbar";
 
 export default function RootLayout({
   children,
