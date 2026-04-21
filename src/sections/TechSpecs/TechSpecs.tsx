@@ -14,7 +14,8 @@ export default function TechSpecs({ textColor, mutedColor, accentColor }: { text
 
   useEffect(() => {
     const checkMobile = () => {
-      setIsMobile(window.innerWidth < 1024);
+      // Synchronized with CSS 992px breakpoint
+      setIsMobile(window.innerWidth < 992);
     };
     checkMobile();
     window.addEventListener("resize", checkMobile);
@@ -28,7 +29,9 @@ export default function TechSpecs({ textColor, mutedColor, accentColor }: { text
   });
 
   // Calculate the parallax Y push (-20% to 20%)
-  const y = useTransform(scrollYProgress, [0, 1], ["-20%", "20%"]);
+  const yParallax = useTransform(scrollYProgress, [0, 1], ["-20%", "20%"]);
+  // Disable parallax on mobile for performance
+  const y = isMobile ? "0%" : yParallax;
 
   return (
     <section className={styles['tech-section']} ref={containerRef} id="tech-specs">

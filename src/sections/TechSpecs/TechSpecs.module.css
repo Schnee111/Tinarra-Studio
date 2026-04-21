@@ -119,7 +119,6 @@
   overflow: hidden;
   border-radius: 36px;
   background-color: var(--surface);
-  will-change: clip-path;
 }
 
 .shimmer {
@@ -154,5 +153,12 @@
   height: 140%;
   object-fit: cover;
   will-change: transform;
+}
+
+@media (max-width: 992px) {
+  .parallax-image {
+    top: 0;
+    height: 100%;
+  }
 }
 
