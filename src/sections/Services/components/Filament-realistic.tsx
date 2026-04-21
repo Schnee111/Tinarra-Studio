@@ -30,27 +30,21 @@ const Filament = memo(({ pathLength, path, isMobile, isReady }: FilamentProps) =
           id={filterId}
           x="-10%" y="-10%" width="120%" height="120%"
           colorInterpolationFilters="sRGB"
-          {...(isReady ? { filterRes: "150" } : {})}
+          {...(isReady ? { filterRes: "100" } : {})}
         >
-          {/* 1. Create a 3D 'bump' from the path */}
-          <feGaussianBlur in="SourceAlpha" stdDeviation="4.5" result="blur" />
+          {/* 1. Create a 3D 'bump' from the path. stdDeviation increased for rounder profile. */}
+          <feGaussianBlur in="SourceAlpha" stdDeviation="5.5" result="blur" />
 
-          {/* 2. SPECULAR HIGHLIGHT: The glossy top rim */}
-          <feSpecularLighting in="blur" surfaceScale="5" specularConstant="0.4" specularExponent="25" lightingColor="#FFFFFF" result="specOut">
-            <feDistantLight azimuth="225" elevation="55" />
-          </feSpecularLighting>
-
-          {/* 3. DIFFUSE LIGHTING: Creates the volumetric shadow */}
-          <feDiffuseLighting in="blur" surfaceScale="5" diffuseConstant="1.2" lightingColor="#FFFFFF" result="diffOut">
+          {/* 2. DIFFUSE LIGHTING: surfaceScale increased to sharpen the curvature */}
+          <feDiffuseLighting in="blur" surfaceScale="12" diffuseConstant="1.2" lightingColor="#FFFFFF" result="diffOut">
             <feDistantLight azimuth="225" elevation="35" />
           </feDiffuseLighting>
 
-          {/* 4. COMPOSITING: Mask results to path and combine */}
-          <feComposite in="specOut" in2="SourceAlpha" operator="in" result="specOut" />
+          {/* 3. COMPOSITING: Mask results to path and combine */}
           <feComposite in="diffOut" in2="SourceAlpha" operator="in" result="diffOut" />
 
-          <feComposite in="SourceGraphic" in2="diffOut" operator="arithmetic" k1="1" k2="0" k3="0" k4="0" result="litColor" />
-          <feComposite in="litColor" in2="specOut" operator="arithmetic" k1="0" k2="1" k3="1" k4="0" />
+          {/* Multiplies SourceGraphic (the color) with diffOut (the lighting/shadow) */}
+          <feComposite in="SourceGraphic" in2="diffOut" operator="arithmetic" k1="1" k2="0" k3="0" k4="0" />
         </filter>
       </defs>
 
