@@ -20,7 +20,7 @@ export default function Services() {
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: svgSize.width > 0 && svgSize.width < 768 
-      ? ["start 90%", "end -40%"] 
+      ? ["start 80%", "end 10%"] 
       : ["start 40%", "end -40%"]
   });
 
@@ -70,13 +70,21 @@ export default function Services() {
     const w = svgSize.width;
     const h = svgSize.height;
 
-    // Original desktop zig-zag used for all devices
+    if (isMobile) {
+      // MOBILE PATH: Ends within Services, turns right at the bottom
+      return `M ${startX} ${h * 0.3}
+              C ${w * 0.4} ${h * 0.23} ${w * 0.95} ${h * 0.3} ${w * 0.8} ${h * 0.45} 
+              S ${w * 0.1} ${h * 0.7} ${w * 0.3} ${h * 0.85}
+              S ${w * 1.2} ${h * 0.92} ${w * 1.5} ${h * 0.8}`;
+    }
+
+    // DESKTOP PATH: Extends to Marquee and behind Footer
     return `M ${startX} ${h * 0.3}
             C ${w * 0.4} ${h * 0.2} ${w * 0.95} ${h * 0.3} ${w * 0.82} ${h * 0.45} 
             S ${w * 0.18} ${h * 0.57} ${w * 0.2} ${h * 0.72}
             S ${w * 0.9} ${h * 0.8} ${w * 0.77} ${h * 0.99}
             S ${w * 1.4} ${h * 1.1} ${w * 0.6} ${h * 1.5}`;
-  }, [svgSize, startX]);
+  }, [svgSize, startX, isMobile]);
 
   const initialAngle = useMemo(() => {
     if (svgSize.width === 0 || svgSize.height === 0) return 0;
