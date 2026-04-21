@@ -62,7 +62,7 @@ export default function Services() {
   }, []);
 
   const isMobile = svgSize.width < 768;
-  const startX = isMobile ? 60 : 160;
+  const startX = isMobile ? 0 : 160;
 
   const filamentPath = useMemo(() => {
     if (svgSize.width === 0 || svgSize.height === 0) return "";
@@ -72,7 +72,7 @@ export default function Services() {
 
     if (isMobile) {
       // MOBILE PATH: Ends within Services, turns right at the bottom
-      return `M ${startX} ${h * 0.35}
+      return `M ${startX} ${h * 0.3}
               C ${w * 0.4} ${h * 0.23} ${w * 0.95} ${h * 0.3} ${w * 0.8} ${h * 0.45} 
               S ${w * 0.1} ${h * 0.7} ${w * 0.3} ${h * 0.85}
               S ${w * 1.2} ${h * 0.92} ${w * 1.5} ${h * 0.8}`;
@@ -165,14 +165,15 @@ export default function Services() {
             />
           )}
         </svg>
-
         
+        { !isMobile && (
           <Nozzle 
             startX={0} 
             top={svgSize.height * 0.3}
             isReady={isReady} 
             svgSize={svgSize} 
           />
+        )}
         
       </motion.div>
     </section>
