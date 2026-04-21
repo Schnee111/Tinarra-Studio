@@ -14,28 +14,23 @@ const services = [
 
 export default function Services() {
   const containerRef = useRef<HTMLDivElement>(null);
+  const [svgSize, setSvgSize] = useState({ width: 0, height: 0 });
+  const [isReady, setIsReady] = useState(false);
 
   const { scrollYProgress } = useScroll({
     target: containerRef,
-    // "start 70%" -> The line starts drawing exactly when the top of the section reaches 70% down the screen
-    // "end 70%" -> The line finishes exactly when the bottom of the section reaches 70% down the screen
-    // This perfectly pins the drawing 'tip' of the line to the 70% viewport mark!
-    offset: ["start 40%", "end -40%"]
+    offset: svgSize.width > 0 && svgSize.width < 768 
+      ? ["start 90%", "end -40%"] 
+      : ["start 40%", "end -40%"]
   });
 
-  // Create a spring for physics-based momentum ("chasing" the scroll)
   const pathLength = useSpring(scrollYProgress, {
     stiffness: 80,
     damping: 20,
     restDelta: 0.001
   });
 
-  // Fade out the line at the very beginning to hide initialization jitters/snaps
   const pathOpacity = useTransform(scrollYProgress, [0, 0.02], [0, 1]);
-
-  // Dynamically measure container size to draw the SVG correctly over the entire scroll height
-  const [svgSize, setSvgSize] = useState({ width: 0, height: 0 });
-  const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -43,10 +38,8 @@ export default function Services() {
     let currentWidth = containerRef.current.offsetWidth;
     let currentHeight = containerRef.current.offsetHeight;
 
-    // Initial size
     setSvgSize({ width: currentWidth, height: currentHeight });
     
-    // Give the browser a moment to settle the layout before rendering the path
     const stabilityTimer = setTimeout(() => setIsReady(true), 100);
 
     const handleResize = () => {
@@ -69,21 +62,21 @@ export default function Services() {
   }, []);
 
   const isMobile = svgSize.width < 768;
-  const startX = isMobile ? 80 : 160;
+  const startX = isMobile ? 0 : 160;
 
-  const generatePath = () => {
+  const filamentPath = useMemo(() => {
     if (svgSize.width === 0 || svgSize.height === 0) return "";
 
     const w = svgSize.width;
     const h = svgSize.height;
 
-    // Adjusted proportions for desktop zig-zag
+    // Original desktop zig-zag used for all devices
     return `M ${startX} ${h * 0.3}
             C ${w * 0.4} ${h * 0.2} ${w * 0.95} ${h * 0.3} ${w * 0.82} ${h * 0.45} 
             S ${w * 0.18} ${h * 0.57} ${w * 0.2} ${h * 0.72}
             S ${w * 0.9} ${h * 0.8} ${w * 0.77} ${h * 0.99}
             S ${w * 1.4} ${h * 1.1} ${w * 0.6} ${h * 1.5}`;
-  };
+  }, [svgSize, startX]);
 
   const initialAngle = useMemo(() => {
     if (svgSize.width === 0 || svgSize.height === 0) return 0;
@@ -95,24 +88,10 @@ export default function Services() {
 
   return (
     <section className={styles['services-section']} ref={containerRef} id="services">
-
-      {/* Ambient Grid */}
       <div className={styles['grid-overlay']} />
 
-      {/* Content flowing naturally: Now using the logic layer overlay for interaction */}
       <div className={styles['services-content']}>
-        
-        {/* New Animated Header */}
         <header className={styles['services-header']}>
-          <motion.span 
-            className={styles['services-subtitle']}
-            initial={{ opacity: 0, y: 10 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            viewport={{ once: false, margin: "-10% 0px" }}
-          >
-            Our Expertise
-          </motion.span>
           <h2 className={styles['services-title']}>
             <div className={styles['title-row']}>
               <SkewReveal text="FULL-SPECTRUM" delay={0.1} isMobile={isMobile} />
@@ -164,7 +143,6 @@ export default function Services() {
         </motion.div>
       </div>
 
-      {/* Logic Layer: Placed LAST in DOM with high z-index and difference blend mode */}
       <motion.div 
         className={styles['svg-container-logic']}
         style={{ opacity: pathOpacity } as any}
@@ -173,21 +151,22 @@ export default function Services() {
           {isReady && svgSize.width > 0 && (
             <Filament 
               pathLength={pathLength} 
-              generatePath={generatePath} 
+              path={filamentPath} 
               isReady={isReady} 
               isMobile={isMobile}
             />
           )}
         </svg>
 
-        {/* The Printing Nozzle Head */}
-        <Nozzle 
-          initialAngle={initialAngle} 
-          startX={startX} 
-          top={svgSize.height * 0.3}
-          isReady={isReady} 
-          svgSize={svgSize} 
-        />
+        {!isMobile && (
+          <Nozzle 
+            initialAngle={initialAngle} 
+            startX={startX} 
+            top={svgSize.height * 0.3}
+            isReady={isReady} 
+            svgSize={svgSize} 
+          />
+        )}
       </motion.div>
     </section>
   );
@@ -205,7 +184,7 @@ function LusionTitle({ line1, line2, reverse = false, isMobile = false }: { line
   useEffect(() => {
     if (isInView) {
       if (isMobile) {
-        setPhase("shift"); // Skip reveal phase on mobile
+        setPhase("shift");
       } else {
         setPhase("reveal");
         const timer = setTimeout(() => setPhase("shift"), 500);
@@ -216,8 +195,6 @@ function LusionTitle({ line1, line2, reverse = false, isMobile = false }: { line
     }
   }, [isInView, isMobile]);
 
-  // reverse=true (Item 1 & 3): Starts Right (flex-end), shifts to Left (flex-start)
-  // reverse=false (Item 2): Starts Left (flex-start), shifts to Right (flex-end)
   const startAlign = reverse ? "flex-end" : "flex-start";
   const endAlign = reverse ? "flex-start" : "flex-end";
   
@@ -226,41 +203,73 @@ function LusionTitle({ line1, line2, reverse = false, isMobile = false }: { line
   return (
     <div ref={detRef} className={styles['lusion-container']}>
       {/* Line 1 */}
-      <motion.div layout className={styles['lusion-line-wrapper']} style={{ justifyContent: currentAlign } as any} transition={{ layout: { duration: 1.2, ease: [0.65, 0, 0.35, 1] } }}>
-        <motion.div layout className={styles['lusion-mask-top']}>
-          <motion.div layout className={styles['lusion-row']}>
-            {words1.map((word, i) => (
+      <motion.div 
+        layout={!isMobile} 
+        className={styles['lusion-line-wrapper']} 
+        style={{ justifyContent: currentAlign } as any} 
+        transition={isMobile ? { duration: 0 } : { layout: { duration: 1.2, ease: [0.65, 0, 0.35, 1] } }}
+      >
+        <motion.div layout={!isMobile} className={styles['lusion-mask-top']}>
+          <motion.div layout={!isMobile} className={styles['lusion-row']}>
+            {isMobile ? (
               <motion.span
-                layout
-                key={i}
                 className={styles['lusion-word']}
                 initial={{ y: "100%", opacity: 0 }}
                 animate={phase !== "initial" ? { y: 0, opacity: 1 } : { y: "100%", opacity: 0 }}
-                transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1], delay: i * 0.1 }}
+                transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
               >
-                {word}{i < words1.length - 1 ? '\u00A0' : ''}
+                {line1}
               </motion.span>
-            ))}
+            ) : (
+              words1.map((word, i) => (
+                <motion.span
+                  layout={!isMobile}
+                  key={i}
+                  className={styles['lusion-word']}
+                  initial={{ y: "100%", opacity: 0 }}
+                  animate={phase !== "initial" ? { y: 0, opacity: 1 } : { y: "100%", opacity: 0 }}
+                  transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1], delay: i * 0.1 }}
+                >
+                  {word}{i < words1.length - 1 ? '\u00A0' : ''}
+                </motion.span>
+              ))
+            )}
           </motion.div>
         </motion.div>
       </motion.div>
 
       {/* Line 2 STAYS STILL at its final destination */}
-      <motion.div layout className={styles['lusion-line-wrapper']} style={{ justifyContent: endAlign } as any} transition={{ layout: { duration: 1.2, ease: [0.65, 0, 0.35, 1] } }}>
-        <motion.div layout className={styles['lusion-mask-bottom']}>
+      <motion.div 
+        layout={!isMobile} 
+        className={styles['lusion-line-wrapper']} 
+        style={{ justifyContent: endAlign } as any} 
+        transition={isMobile ? { duration: 0 } : { layout: { duration: 1.2, ease: [0.65, 0, 0.35, 1] } }}
+      >
+        <motion.div layout={!isMobile} className={styles['lusion-mask-bottom']}>
           <motion.div layout className={styles['lusion-row']}>
-            {words2.map((word, i) => (
+            {isMobile ? (
               <motion.span
-                layout
-                key={i}
                 className={styles['lusion-word']}
                 initial={{ y: "-100%", opacity: 0 }}
                 animate={phase !== "initial" ? { y: 0, opacity: 1 } : { y: "-100%", opacity: 0 }}
-                transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1], delay: i * 0.1 }}
+                transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
               >
-                {word}{i < words2.length - 1 ? '\u00A0' : ''}
+                {line2}
               </motion.span>
-            ))}
+            ) : (
+              words2.map((word, i) => (
+                <motion.span
+                  layout={!isMobile}
+                  key={i}
+                  className={styles['lusion-word']}
+                  initial={{ y: "-100%", opacity: 0 }}
+                  animate={phase !== "initial" ? { y: 0, opacity: 1 } : { y: "-100%", opacity: 0 }}
+                  transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1], delay: i * 0.1 }}
+                >
+                  {word}{i < words2.length - 1 ? '\u00A0' : ''}
+                </motion.span>
+              ))
+            )}
           </motion.div>
         </motion.div>
       </motion.div>
@@ -269,72 +278,78 @@ function LusionTitle({ line1, line2, reverse = false, isMobile = false }: { line
 }
 
 function ServiceDescription({ text, isMobile = false }: { text: string, isMobile?: boolean }) {
-  const words = useMemo(() => text.split(" "), [text]);
-  
   return (
     <motion.p 
       className={styles['service-desc']}
+      initial="initial"
+      whileInView="enter"
+      viewport={{ once: false }}
       variants={{
         initial: { opacity: 0, y: isMobile ? 15 : 0 },
         enter: { 
           opacity: 1, 
           y: 0,
           transition: { 
-            staggerChildren: isMobile ? 0 : 0.02, 
-            delayChildren: 0.2,
+            delay: 0.2,
             duration: isMobile ? 0.8 : 0.4 
           } 
         }
       }}
     >
-      {words.map((word, i) => (
-        <motion.span
-          key={i}
-          variants={{
-            initial: { opacity: 0, x: isMobile ? 0 : 2 },
-            enter: { 
-              opacity: 1, 
-              x: 0,
-              transition: { duration: 0.5, ease: "easeOut" } 
-            }
-          }}
-          style={{ display: "inline-block", marginRight: "0.35em" } as any}
-        >
-          {word}
-        </motion.span>
-      ))}
+      {text}
     </motion.p>
   );
 }
 
 function SkewReveal({ text, delay = 0, className = "", isMobile = false }: { text: string, delay?: number, className?: string, isMobile?: boolean }) {
-
   const words = useMemo(() => text.split(" "), [text]);
   
   return (
     <span className={styles['skew-container']}>
-      {words.map((word, i) => (
-        <span key={i} className={styles['skew-mask']}>
+      {isMobile ? (
+        <span className={styles['skew-mask']}>
           <motion.span
             className={`${styles['skew-word']} ${className}`}
-            initial={{ y: "110%", skewY: isMobile ? 0 : 10, opacity: 0 }}
+            initial={{ y: "110%", skewY: 0, opacity: 0 }}
             whileInView={{ 
               y: 0, 
               skewY: 0, 
               opacity: 1,
               transition: { 
-                duration: isMobile ? 0.7 : 1.1, 
+                duration: 0.5, 
                 ease: [0.215, 0.61, 0.355, 1],
-                delay: isMobile ? delay : delay + (i * 0.1)
+                delay: delay
               }
             }}
             viewport={{ once: false }}
           >
-            {word}
+            {text}
           </motion.span>
-          {i < words.length - 1 && <span className={styles['skew-space']}>&nbsp;</span>}
         </span>
-      ))}
+      ) : (
+        words.map((word, i) => (
+          <span key={i} className={styles['skew-mask']}>
+            <motion.span
+              className={`${styles['skew-word']} ${className}`}
+              initial={{ y: "110%", skewY: 10, opacity: 0 }}
+              whileInView={{ 
+                y: 0, 
+                skewY: 0, 
+                opacity: 1,
+                transition: { 
+                  duration: 1.1, 
+                  ease: [0.215, 0.61, 0.355, 1],
+                  delay: delay + (i * 0.1)
+                }
+              }}
+              viewport={{ once: false }}
+            >
+              {word}
+            </motion.span>
+            {i < words.length - 1 && <span className={styles['skew-space']}>&nbsp;</span>}
+          </span>
+        ))
+      )}
     </span>
   );
 }

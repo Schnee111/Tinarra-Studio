@@ -6,12 +6,12 @@ import styles from "../Services.module.css";
 
 interface FilamentProps {
   pathLength: any;
-  generatePath: () => string;
+  path: string;
   isMobile: boolean;
   isReady: boolean;
 }
 
-const Filament = memo(({ pathLength, generatePath, isMobile, isReady }: FilamentProps) => {
+const Filament = memo(({ pathLength, path, isMobile, isReady }: FilamentProps) => {
   const filterId = useId();
   const filamentFilterUrl = `url(#${filterId})`;
 
@@ -22,7 +22,7 @@ const Filament = memo(({ pathLength, generatePath, isMobile, isReady }: Filament
       style={{ overflow: 'visible' }}
       aria-hidden="true"
       role="presentation"
-      shapeRendering="geometricPrecision"
+      shapeRendering={isMobile ? "auto" : "geometricPrecision"}
     >
       <defs>
         {/* ── Realistic 3D Tubular Lighting Filter ── */}
@@ -57,10 +57,10 @@ const Filament = memo(({ pathLength, generatePath, isMobile, isReady }: Filament
       <g>
         {/* --- THE CORE FILAMENT BODY --- */}
         <motion.path
-          d={generatePath()}
+          d={path}
           className={styles['svg-path-logic']}
           vectorEffect="non-scaling-stroke"
-          strokeWidth={isMobile ? 18 : 30}
+          strokeWidth={isMobile ? 10 : 30}
           style={{
             pathLength,
             filter: isMobile ? 'none' : filamentFilterUrl

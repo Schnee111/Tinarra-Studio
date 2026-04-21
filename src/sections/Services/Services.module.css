@@ -241,7 +241,7 @@
 @media (max-width: 768px) {
   .services-content {
     gap: 15vh;
-    padding: 10vh 5vw;
+    padding: 25vh 5vw 10vh;
   }
 
   .services-header {
