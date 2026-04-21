@@ -45,7 +45,7 @@ export default function Preloader() {
           className={styles['preloader-container']}
           initial={{ opacity: 1 }}
           exit={{ 
-            scale: 1.1,
+            scale: 3,
             opacity: 0,
             filter: "blur(20px)",
             transition: { duration: 1.3, ease: [0.76, 0, 0.24, 1] } 
