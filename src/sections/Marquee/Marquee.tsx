@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
 import { 
   motion, 
   useScroll, 
@@ -37,9 +37,30 @@ function VelocityText({
   baseVelocity = 100,
   damping = 50,
   stiffness = 400,
-  numCopies = 6
+  numCopies = 2
 }: VelocityTextProps) {
   const baseX = useMotionValue(0);
+  const [isMobile, setIsMobile] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [isInView, setIsInView] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+
+    const observer = new IntersectionObserver(
+      ([entry]) => setIsInView(entry.isIntersecting),
+      { threshold: 0 }
+    );
+    if (containerRef.current) observer.observe(containerRef.current);
+
+    return () => {
+      window.removeEventListener("resize", checkMobile);
+      observer.disconnect();
+    };
+  }, []);
+
   const { scrollY } = useScroll();
   const scrollVelocity = useVelocity(scrollY);
   const smoothVelocity = useSpring(scrollVelocity, {
@@ -54,20 +75,24 @@ function VelocityText({
 
   const directionFactor = useRef<number>(1);
   useAnimationFrame((t, delta) => {
+    // OPTIMASI: Hanya pindahkan marquee jika sedang di dalam viewport
+    if (!isInView) return;
+
     let moveBy = directionFactor.current * baseVelocity * (delta / 1000);
 
-    if (velocityFactor.get() < 0) {
-      directionFactor.current = -1;
-    } else if (velocityFactor.get() > 0) {
-      directionFactor.current = 1;
+    if (!isMobile) {
+      const v = velocityFactor.get();
+      if (v < 0) directionFactor.current = -1;
+      else if (v > 0) directionFactor.current = 1;
+      
+      moveBy += directionFactor.current * moveBy * v;
     }
 
-    moveBy += directionFactor.current * moveBy * velocityFactor.get();
     baseX.set(baseX.get() + moveBy);
   });
 
   return (
-    <div className={styles.parallax}>
+    <div ref={containerRef} className={styles.parallax}>
       <motion.div className={styles.scroller} style={{ x }}>
         {Array.from({ length: numCopies }).map((_, i) => (
           <span key={i}>{children} </span>
@@ -92,7 +117,7 @@ function ScrollVelocity({
   className = "",
   damping = 50,
   stiffness = 400,
-  numCopies = 6
+  numCopies = 3
 }: ScrollVelocityProps) {
   return (
     <div className={`${styles['marquee-velocity-bg']} ${className}`}>
@@ -117,78 +142,76 @@ function ScrollVelocity({
 }
 
 /* -------------------------------------------------------------------------- */
-/* ScrollFloat                                */
+/* FocusReveal                                */
 /* -------------------------------------------------------------------------- */
 
-interface ScrollFloatProps {
+interface FocusRevealProps {
   children: string;
   scrollStart?: string;
   scrollEnd?: string;
   stagger?: number;
-  ease?: string;
   animationDuration?: number;
-  once?: boolean;
 }
 
-function ScrollFloat({ 
+function FocusReveal({ 
   children, 
-  scrollStart = "top bottom", 
-  scrollEnd = "bottom center",
-  stagger = 0.03,
-  ease = "back.inOut(2)",
-  animationDuration = 1,
-  once = false
-}: ScrollFloatProps) {
+  scrollStart = "top bottom-=50%", 
+  scrollEnd = "bottom center+=50%",
+  stagger = 0.1,
+  animationDuration = 1.5
+}: FocusRevealProps) {
   const containerRef = useRef<HTMLDivElement>(null);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
 
   useEffect(() => {
     if (!containerRef.current) return;
     
-    // GSAP Context: Praktik terbaik React untuk mencegah memory leak & duplikasi event
     const ctx = gsap.context(() => {
-      const chars = containerRef.current!.querySelectorAll(`.${styles.char}`);
+      const words = containerRef.current!.querySelectorAll(`.${styles.word}`);
       
-      gsap.fromTo(chars, 
+      gsap.fromTo(words, 
         { 
           opacity: 0, 
-          y: 100, 
-          scaleY: 2.3, 
-          scaleX: 0.7
+          letterSpacing: isMobile ? "0.2em" : "0.8em", 
+          filter: isMobile ? "blur(4px)" : "blur(12px)",
+          y: 10
         }, 
         { 
           opacity: 1, 
-          y: 0, 
-          scaleY: 1, 
-          scaleX: 1,
-          stagger: stagger,
-          ease: ease,
+          letterSpacing: "0.02em", 
+          filter: "blur(0px)",
+          y: 0,
+          stagger: isMobile ? 0.05 : stagger,
+          ease: "power2.out",
           duration: animationDuration,
           scrollTrigger: {
             trigger: containerRef.current,
             start: scrollStart,
             end: scrollEnd,
             scrub: true,
-            once: once,
           }
         }
       );
     }, containerRef);
 
     return () => ctx.revert();
-  }, [scrollStart, scrollEnd, stagger, ease, animationDuration, once]);
+  }, [scrollStart, scrollEnd, stagger, animationDuration, isMobile]);
 
   const words = children.split(" ");
 
   return (
     <div ref={containerRef} className={styles['btn-float-container']}>
-      {words.map((word, wordIdx) => (
-        <span key={wordIdx} className={styles.word} style={{ display: "inline-block", whiteSpace: "nowrap" }}>
-          {word.split("").map((char, charIdx) => (
-            <span key={charIdx} className={styles.char} style={{ display: "inline-block" }}>
-              {char}
-            </span>
-          ))}
-          {wordIdx < words.length - 1 && <span className={styles.char}>&nbsp;</span>}
+      {words.map((word, idx) => (
+        <span key={idx} className={styles.word}>
+          {word}
+          {idx < words.length - 1 && <span>&nbsp;</span>}
         </span>
       ))}
     </div>
@@ -205,7 +228,7 @@ export default function Marquee() {
       <ScrollVelocity 
         texts={['TINARRA STUDIO —', 'CREATIVE 3D PRINTING —']} 
         velocity={1}
-        numCopies={4} /* OPTIMASI: Dikurangi dari 6 menjadi 4 untuk memangkas beban DOM */
+        numCopies={3} /* OPTIMASI: Dikurangi lagi menjadi 3 untuk memangkas beban DOM pada desktop */
         damping={50}
         stiffness={400}
       />
@@ -214,16 +237,13 @@ export default function Marquee() {
         <span className={styles['cta-subtitle']}>READY TO MANIFEST?</span>
         
         <Link href="mailto:hello@tinarra.studio" className={styles['cta-button']}>
-          <ScrollFloat
-            animationDuration={1}
-            ease='back.inOut(2)'
+          <FocusReveal
             scrollStart='center bottom+=20%'
-            scrollEnd='bottom bottom-=50%'
-            stagger={0.04}
-            once={false}
+            scrollEnd='bottom bottom-=20%'
+            stagger={0.1}
           >
             LET'S WORK TOGETHER
-          </ScrollFloat>
+          </FocusReveal>
 
           <div className={styles['btn-icon']}>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

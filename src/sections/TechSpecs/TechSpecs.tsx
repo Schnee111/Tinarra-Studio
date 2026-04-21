@@ -133,12 +133,16 @@ function WordTypewriter({ text, color, isMobile = false }: { text: string, color
         <motion.span
           key={i}
           variants={{
-            initial: { opacity: 0, x: 5, filter: "blur(5px)" },
+            initial: { 
+              opacity: 0, 
+              filter: isMobile ? "none" : "blur(2px)", 
+              x: 4 
+            },
             enter: { 
               opacity: 1, 
+              filter: "blur(0px)", 
               x: 0,
-              filter: "blur(0px)",
-              transition: { duration: 0.4, ease: "easeOut" } 
+              transition: { duration: 1.2, ease: [0.16, 1, 0.3, 1] as any } 
             }
           }}
           style={{ display: "inline-block", marginRight: "0.3em", color }}

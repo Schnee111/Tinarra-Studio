@@ -46,6 +46,8 @@
   white-space: nowrap;
   will-change: transform;
   transform: translateZ(0); 
+  backface-visibility: hidden;
+  perspective: 1000;
 }
 
 .scroller span {
@@ -58,10 +60,6 @@
 .word {
   display: inline-block;
   white-space: nowrap;
-}
-
-.char {
-  display: inline-block;
   will-change: transform, opacity, filter;
 }
 
@@ -141,9 +139,10 @@
 
 @media (max-width: 768px) {
   .cta-section {
-    min-height: 45vh; /* Kurangi tinggi di mobile */
+    min-height: 40vh;
     height: auto;
-    padding: 10vh 5vw;
+    margin-top: 20vh; /* Final tweak */
+    padding: 10vh 5vw; /* Balanced internal alignment */
   }
   
   .scroller {
@@ -152,12 +151,14 @@
   
   .marquee-velocity-bg {
     gap: 1vh;
-    opacity: 0.05;
+    opacity: 0.15;
   }
 
   .btn-float-container {
-    font-size: clamp(2rem, 10vw, 3rem);
-    flex-wrap: wrap;
+    font-size: clamp(1.5rem, 7.5vw, 2.2rem);
+    flex-direction: row;
+    white-space: nowrap;
     justify-content: center;
+    align-items: center;
   }
 }

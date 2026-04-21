@@ -43,6 +43,11 @@
   perspective: 1000px;
 }
 
+.word-mask {
+  overflow: hidden;
+  display: inline-block;
+}
+
 .word-wrapper {
   display: inline-flex;
   white-space: nowrap;
