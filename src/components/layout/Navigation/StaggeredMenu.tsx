@@ -151,22 +151,21 @@ export const StaggeredMenuOverlay: React.FC<{
     gsap.set(links, { '--sm-num-opacity': 0 });
 
     layers.forEach((layer, i) => {
-      tl.to(layer, { xPercent: 0, duration: 0.5, ease: 'power4.out', overwrite: true }, i * 0.08);
+      tl.to(layer, { xPercent: 0, duration: 0.45, ease: 'power4.out', overwrite: true }, i * 0.065);
     });
     
-    tl.to(panel, { xPercent: 0, duration: 0.7, ease: 'power4.out', overwrite: true }, layers.length * 0.08);
+    tl.to(panel, { xPercent: 0, duration: 0.6, ease: 'power4.out', overwrite: true }, layers.length * 0.065);
 
-    // Staggers - Logo reveal
     if (logo) {
       tl.to(logo, { 
-        yPercent: 0, rotate: 0, opacity: 1, duration: 0.8, ease: 'power4.out' 
-      }, ">-0.65");
+        yPercent: 0, rotate: 0, opacity: 1, duration: 0.7, ease: 'power4.out' 
+      }, ">-0.55");
     }
 
     // Staggers - Links reveal
     tl.to(links, { 
-      yPercent: 0, rotate: 0, duration: 0.8, ease: 'power4.out', stagger: 0.08 
-    }, logo ? "<+0.1" : ">-0.65");
+      yPercent: 0, rotate: 0, duration: 0.7, ease: 'power4.out', stagger: 0.065 
+    }, logo ? "<+0.07" : ">-0.55");
     
     tl.to(links, {
       '--sm-num-opacity': 1, duration: 0.6, ease: 'power2.out', stagger: 0.08
@@ -188,9 +187,9 @@ export const StaggeredMenuOverlay: React.FC<{
     openTlRef.current?.kill();
     gsap.to([panel, ...layers], {
       xPercent: 100,
-      duration: 0.45,
+      duration: 0.4,
       ease: 'power4.in',
-      stagger: 0.04,
+      stagger: 0.035,
       overwrite: true
     });
   }, []);

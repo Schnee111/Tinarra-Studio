@@ -9,20 +9,38 @@ import styles from "./Navigation.module.css";
 export default function Navigation() {
   const [mounted, setMounted] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const lenis = useLenis();
-
+ 
   useEffect(() => {
     setMounted(true);
+    const checkMobile = () => setIsMobile(window.innerWidth < 1024);
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
   }, []);
-
+ 
   const handleScroll = (href: string) => {
-    const target = href === "#home" ? 0 : href;
-    setIsMenuOpen(false);
+    const targetId = href === "#home" ? 0 : href;
     
-    lenis?.scrollTo(target, {
-      duration: 1.5,
-      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-    });
+    // 1. Close menu and resume scroll immediately
+    setIsMenuOpen(false);
+    lenis?.start();
+
+    // 2. Desktop: Use Lenis for silk-smooth scroll
+    //    Mobile: Use Native Browser Scroll (100% reliable)
+    if (!isMobile && lenis) {
+      lenis.scrollTo(targetId, {
+        duration: 1.5,
+        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      });
+    } else {
+      // Native fallback for mobile or if Lenis is missing
+      const element = href === "#home" ? document.body : document.querySelector(href);
+      if (element) {
+        element.scrollIntoView({ behavior: "smooth" });
+      }
+    }
   };
 
   const menuItems = [
