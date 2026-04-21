@@ -19,11 +19,11 @@ export default function Hero() {
     const cores = navigator.hardwareConcurrency || 4;
 
     if (isMobile) {
-      setParticleSize(220); // Lower particle count for mobile
+      setParticleSize(70); // Lower particle count for mobile
     } else if (cores >= 8) {
-      setParticleSize(420); // High-end devices
+      setParticleSize(260); // High-end devices
     } else {
-      setParticleSize(320); // Mid-range laptops
+      setParticleSize(130); // Mid-range laptops
     }
 
     // Performance Guard: Matikan render 3D jika di luar viewport
@@ -45,7 +45,7 @@ export default function Hero() {
     e.preventDefault();
     const href = e.currentTarget.getAttribute("href");
     if (!href) return;
-    
+
     lenis?.scrollTo(href, {
       duration: 2.2,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
@@ -53,14 +53,14 @@ export default function Hero() {
   };
 
   const { scrollYProgress } = useScroll({ target: containerRef, offset: ["start start", "end start"] });
-  
+
   // Depth & Divergence Transforms
   const scale = useTransform(scrollYProgress, [0, 1], [1, 1.3]);
   const y1 = useTransform(scrollYProgress, [0, 1], [0, -150]);
   const y2 = useTransform(scrollYProgress, [0, 1], [0, 150]);
   const x1 = useTransform(scrollYProgress, [0, 1], [0, -40]);
   const x2 = useTransform(scrollYProgress, [0, 1], [0, 40]);
-  
+
   // Optical Effects: Fade and Blur (Focus Pull)
   const opacity = useTransform(scrollYProgress, [0, 0.7], [1, 0]);
   const blurValue = useTransform(scrollYProgress, [0, 0.8], [0, 8]);
@@ -79,9 +79,9 @@ export default function Hero() {
   }, []);
 
   return (
-    <motion.section 
-      className={styles['hero-section']} 
-      id="home" 
+    <motion.section
+      className={styles['hero-section']}
+      id="home"
       ref={containerRef}
       style={{ opacity: globalOpacity } as any}
       initial={{ opacity: 0 }}
@@ -89,8 +89,8 @@ export default function Hero() {
       transition={{ duration: 1.5, ease: "easeOut" }}
     >
       <div className={styles['hero-fullscreen-3d']}>
-        <Canvas 
-          frameloop={isCanvasActive ? "always" : "never"} 
+        <Canvas
+          frameloop={isCanvasActive ? "always" : "never"}
           camera={{ position: [0, 0, 4], fov: 45 }}
           resize={{ offsetSize: true }}
           gl={{ antialias: !isMobile, powerPreference: "high-performance" }}
@@ -98,84 +98,90 @@ export default function Hero() {
           <color attach="background" args={['#030303']} />
           <ambientLight intensity={1} />
           <Suspense fallback={null}>
-            <Particles 
-              speed={0.1} 
-              fov={150} 
-              aperture={4.5} 
-              focus={3.1} 
-              curl={0.25} 
-              size={particleSize} 
+            <Particles
+              speed={0.1}
+              fov={isMobile ? 20 : 120}
+              aperture={isMobile ? 3.5 : 4.5}
+              focus={isMobile ? 4.7 : 3.3}
+              curl={isMobile ? 0.4 : 0.4}
+              size={particleSize}
               scroll={(isMobile ? 0 : scrollYProgress) as any}
-              interactive={!isMobile} 
+              interactive={!isMobile}
             />
           </Suspense>
-          
+
           {!isMobile && (
-            <OrbitControls 
-              makeDefault 
-              autoRotate 
-              autoRotateSpeed={1} 
-              enableZoom={false} 
-              enablePan={false} 
-              enableRotate={false} 
+            <OrbitControls
+              makeDefault
+              autoRotate
+              autoRotateSpeed={1}
+              enableZoom={false}
+              enablePan={false}
+              enableRotate={false}
             />
           )}
           <CameraShake yawFrequency={1} maxYaw={0.05} pitchFrequency={1} maxPitch={0.05} rollFrequency={0.5} maxRoll={0.5} intensity={0.2} />
         </Canvas>
       </div>
 
-      <motion.div 
-        className={styles['hero-brutalist-text']} 
-        style={{ 
-          opacity: isMobile ? 1 : opacity, 
-          scale: isMobile ? 1 : scale, 
-          filter: isMobile ? "none" : blur 
+      <motion.div
+        className={styles['hero-brutalist-text']}
+        style={{
+          opacity: isMobile ? 1 : opacity,
+          scale: isMobile ? 1 : scale,
+          filter: isMobile ? "none" : blur
         } as any}
       >
         <div className={styles['title-group']}>
-          <motion.h1 
-            className={`${styles['giant-text']} ${styles['primary-text']}`} 
-            style={{ 
-              y: isMobile ? 0 : y1, 
-              x: isMobile ? 0 : x1 
+          <motion.h1
+            className={`${styles['giant-text']} ${styles['primary-text']}`}
+            initial={{ clipPath: 'inset(100% 0% 0% 0%)', opacity: 0, y: 50 }}
+            animate={{ clipPath: 'inset(0% 0% 0% 0%)', opacity: 1, y: 0 }}
+            transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1], delay: 0.4 }}
+            style={{
+              y: isMobile ? 0 : y1,
+              x: isMobile ? 0 : x1
             }}
           >
             TINARRA
           </motion.h1>
-          <motion.h1 
-            className={`${styles['giant-text']} ${styles['outline-text']} ${styles['offset-text']}`} 
-            style={{ 
-              y: isMobile ? 0 : y2, 
-              x: isMobile ? 0 : x2 
+          <motion.h1
+            className={`${styles['giant-text']} ${styles['outline-text']} ${styles['offset-text']}`}
+            initial={{ clipPath: 'inset(100% 0% 0% 0%)', opacity: 0, y: 50 }}
+            animate={{ clipPath: 'inset(0% 0% 0% 0%)', opacity: 1, y: 0 }}
+            transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1], delay: 0.55 }}
+            style={{
+              y: isMobile ? 0 : y2,
+              x: isMobile ? 0 : x2
             }}
           >
             STUDIO
           </motion.h1>
         </div>
         <div className={styles['hero-subtext-wrapper']}>
-          <WordReveal text="A Micro-Factory for Digital Craftsmanship." delay={1.5} />
+          <WordReveal text="A Micro-Factory for Digital Craftsmanship." delay={1.5} isMobile={isMobile} />
         </div>
       </motion.div>
 
       <div className={styles['hero-footer']}>
-        <motion.div 
+        <motion.div
           className={styles['hero-footer-content']}
-          style={{ 
-            opacity: isMobile ? 1 : footerOpacity, 
-            filter: isMobile ? "none" : footerBlur 
+          style={{
+            opacity: isMobile ? 1 : footerOpacity,
+            filter: isMobile ? "none" : footerBlur
           } as any}
         >
           <div className={styles['hero-scroll-wrapper']}>
             <a href="#story" onClick={handleScroll} className={styles['scroll-indicator-link']}>
               <div className={styles['scroll-indicator']}>
-                <motion.div 
+                <motion.div
                   className={styles['scroll-dot']}
                   style={{ transformOrigin: "top" } as any}
-                  animate={{ 
+                  animate={{
                     height: [6, 20, 6, 6], // Natural pill stretch
                     y: [0, 0, 14, 0],      // Catch-up effect
                   }}
-                  transition={{ 
+                  transition={{
                     duration: 2.4,
                     repeat: Infinity,
                     times: [0, 0.4, 0.7, 1],
@@ -190,7 +196,7 @@ export default function Hero() {
     </motion.section>
   );
 }
-function WordReveal({ text, delay = 0 }: { text: string, delay?: number }) {
+function WordReveal({ text, delay = 0, isMobile = false }: { text: string, delay?: number, isMobile?: boolean }) {
   const words = text.split(" ");
   return (
     <motion.div
@@ -205,7 +211,7 @@ function WordReveal({ text, delay = 0 }: { text: string, delay?: number }) {
         <motion.span
           key={i}
           variants={{
-            initial: { opacity: 0, filter: "blur(8px)", y: 10 },
+            initial: { opacity: 0, filter: isMobile ? "none" : "blur(8px)", y: 10 },
             enter: { opacity: 1, filter: "blur(0px)", y: 0 }
           }}
           transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] as any }}

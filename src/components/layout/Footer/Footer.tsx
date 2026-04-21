@@ -1,16 +1,23 @@
 "use client";
 
 import styles from "./Footer.module.css";
-import { useRef } from "react";
+import { useRef, useState, useEffect, useMemo } from "react";
 import Link from "next/link";
 import { motion, useInView } from "framer-motion";
-import { useMemo } from "react";
 import { useLenis } from "lenis/react";
 
 export default function Footer() {
   const year = new Date().getFullYear();
   const footerRef = useRef(null);
   const isInView = useInView(footerRef, { once: false, amount: 0.1 });
+
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 1024);
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
 
   const containerVariants = {
     initial: { opacity: 0 },
@@ -22,7 +29,11 @@ export default function Footer() {
 
   // Optical Focus Reveal (Lens focus effect)
   const focusVariants = {
-    initial: { opacity: 0, scale: 0.95, filter: "blur(6px)" },
+    initial: { 
+      opacity: 0, 
+      scale: 0.95, 
+      filter: isMobile ? "none" : "blur(2px)" 
+    },
     enter: { 
       opacity: 1, 
       scale: 1, 
@@ -61,6 +72,7 @@ export default function Footer() {
               <WordReveal 
                 text={"Precision meets creativity. Let's\u00A0engineer your imagination into reality."} 
                 delay={0.2}
+                isMobile={isMobile}
               />
             </div>
             
@@ -109,7 +121,11 @@ export default function Footer() {
               <motion.span
                 key={index}
                 style={{ display: "inline-block" }}
-                initial={{ opacity: 0, y: 40, filter: "blur(10px)" }}
+                initial={{ 
+                  opacity: 0, 
+                  y: 40, 
+                  filter: isMobile ? "none" : "blur(4px)" 
+                }}
                 whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
                 transition={{ 
                   duration: 1.2, 
@@ -129,7 +145,7 @@ export default function Footer() {
   );
 }
 
-function WordReveal({ text, delay = 0 }: { text: string, delay?: number }) {
+function WordReveal({ text, delay = 0, isMobile = false }: { text: string, delay?: number, isMobile?: boolean }) {
   const words = useMemo(() => text.split(" "), [text]);
   
   return (
@@ -144,7 +160,11 @@ function WordReveal({ text, delay = 0 }: { text: string, delay?: number }) {
         <motion.span
           key={i}
           variants={{
-            initial: { opacity: 0, filter: "blur(4px)", x: 4 },
+            initial: { 
+              opacity: 0, 
+              filter: isMobile ? "none" : "blur(2px)", 
+              x: 4 
+            },
             enter: { 
               opacity: 1, 
               filter: "blur(0px)", 

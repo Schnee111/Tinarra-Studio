@@ -2,7 +2,7 @@
   position: relative;
   z-index: 10000;
   background: #f5f5f5; /* Static White as requested */
-  min-height: 110vh;
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -144,7 +144,7 @@
 
 @media (max-width: 768px) {
   .footer-inner {
-    padding: 16vh 6vw 0 6vw; /* Pushed the top content further down */
+    padding: 25vh 6vw 0 6vw; /* Pushed the top content further down */
   }
   .footer-top {
     flex-direction: column;

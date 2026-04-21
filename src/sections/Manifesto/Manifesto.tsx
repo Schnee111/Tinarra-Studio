@@ -22,7 +22,7 @@ export default function Manifesto({ textColor, mutedColor }: { textColor?: any, 
 
   const { scrollYProgress } = useScroll({
     target: containerRef,
-    offset: ["start 45%", "end 85%"]
+    offset: isMobile ? ["start 70%", "end 60%"] : ["start 45%", "end 85%"]
   });
 
   const words = text.split(" ");

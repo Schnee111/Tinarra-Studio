@@ -54,13 +54,11 @@
   color: var(--accent);
   z-index: 5;
   position: relative;
-  margin-right: 10vw;
-  /* Menggeser teks atas "TINARRA" sedikit ke kiri */
 }
 
 .outline-text {
   color: transparent;
-  -webkit-text-stroke: 1px rgba(255, 255, 255, 1);
+  -webkit-text-stroke: 1.5px rgba(255, 255, 255, 1);
   text-shadow: 0 4px 24px rgba(0, 0, 0, 0.8);
   mix-blend-mode: difference;
   z-index: 2;
@@ -99,13 +97,16 @@
   font-family: var(--font-manrope), sans-serif;
   font-size: clamp(0.7rem, 0.9vw, 0.9rem);
   /* Slightly more delicate */
-  font-weight: 600; /* Increased weight for visibility */
+  font-weight: 600;
+  /* Increased weight for visibility */
   text-transform: uppercase;
   letter-spacing: 0.45em;
   /* Extreme luxury tracking */
-  color: rgba(255, 255, 255, 0.9); /* Increased opacity for legibility */
+  color: rgba(255, 255, 255, 0.9);
+  /* Increased opacity for legibility */
   white-space: pre;
-  text-shadow: 0 4px 15px rgba(0, 0, 0, 1); /* Stronger shadow for contrast */
+  text-shadow: 0 4px 15px rgba(0, 0, 0, 1);
+  /* Stronger shadow for contrast */
 }
 
 .hero-footer {
@@ -174,23 +175,26 @@
   width: 5px;
   height: 5px;
   background-color: var(--accent);
-  border-radius: 10px; /* Force capsule shape, not oval */
+  border-radius: 10px;
+  /* Force capsule shape, not oval */
   margin-top: 7px;
 }
 
 @media (max-width: 768px) {
   .hero-section {
-    pointer-events: auto !important; /* Restore for native scroll capture */
-    touch-action: pan-y !important;
-    overflow: visible !important; /* Prevent scroll-locking in some mobile browsers */
-    height: auto !important; /* Allow natural page length calculation */
+    height: 100vh !important;
+    height: -webkit-fill-available !important;
     min-height: 100vh;
+    pointer-events: auto !important;
+    touch-action: pan-y !important;
+    overflow: visible !important;
   }
 
   .hero-brutalist-text {
     justify-content: center;
     padding: 0 5vw;
-    pointer-events: none; /* Already none, but keep priority */
+    pointer-events: none;
+    /* Already none, but keep priority */
   }
 
   .giant-text {
@@ -219,8 +223,8 @@
   }
 
   .hero-footer {
-    padding: 8rem 5vw;
-    pointer-events: auto; /* Ensure indicator remains clickable */
+    padding: 6rem 5vw 9rem; /* Further lifted to stay above toolbar in 100vh mode */
+    pointer-events: auto;
   }
 
   .hero-footer-content {
@@ -228,13 +232,14 @@
   }
 
   .scroll-indicator {
-    width: 16px;
-    height: 28px;
+    width: 24px;
+    height: 40px;
+    border-width: 2px;
   }
 
   .scroll-dot {
-    width: 3px;
-    height: 3px;
-    margin-top: 5px;
+    width: 4px;
+    height: 4px;
+    margin-top: 8px;
   }
 }
