@@ -104,7 +104,7 @@
   background-image:
     linear-gradient(to right, rgba(255, 255, 255, 0.025) 1px, transparent 1px),
     linear-gradient(to bottom, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
-  z-index: 0;
+  z-index: 1;
 }
 
 .svg-container-logic {
@@ -220,18 +220,16 @@
 /* --- THE NOZZLE TIP --- */
 .nozzle-tip {
   position: absolute;
-  top: 25%;
   
-  /* Ukuran diperlebar mengikuti rasio baru (200x120 SVG) -> Skala 1.5x */
-  width: 300px; 
-  height: 180px;
+  width: 200px; 
+  height: auto;
   
-  /* KALKULASI POROS BARU:
-     Titik ujung moncong SVG (185, 60) dikalikan skala 1.5
-     X = 277.5px, Y = 90px */
-  margin-left: -277.5px;
-  margin-top: -90px; 
-  transform-origin: 277.5px 90px;
+  /* Permintaan user: menempel ke kiri layar */
+  margin-left: 0;
+  margin-top: 0;
+  
+  /* Tidak ada rotasi, hanya penyesuaian Y */
+  transform: translateY(-25%);
   
   z-index: 10000;
   pointer-events: none;
@@ -274,12 +272,10 @@
   }
 
   .nozzle-tip {
-    /* Skala Layar HP (1:1 dengan rasio SVG) */
-    width: 200px;
-    height: 120px;
-    margin-left: -185px;
-    margin-top: -60px;
-    transform-origin: 185px 60px;
+    width: 150px;
+    height: auto;
+    margin: 0;
+    transform: translateY(-9%);
   }
 
   .svg-container-logic {
