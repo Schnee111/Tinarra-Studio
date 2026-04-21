@@ -105,7 +105,7 @@ export default function Hero() {
               focus={isMobile ? 4.7 : 3.3}
               curl={isMobile ? 0.4 : 0.4}
               size={particleSize}
-              scroll={(isMobile ? 0 : scrollYProgress) as any}
+              scroll={scrollYProgress as any}
               interactive={!isMobile}
             />
           </Suspense>
