@@ -153,29 +153,15 @@
     position: relative;
     height: auto; 
     display: flex;
-    flex-direction: column; /* Ubah ke column agar dot bisa di bawah */
+    flex-direction: column;
     align-items: center;
   }
-
-  /* Gradasi yang lebih clean & halus (multi-stop gradient) */
-  /* .gallery-sticky::after {
-    content: "";
-    position: absolute;
-    top: 0;
-    right: 0;
-    width: 5vw; 
-    height: 60vh; 
-    background: linear-gradient(to left, var(--background) 10%, rgba(3, 3, 3, 0.7) 40%, transparent 100%);
-    pointer-events: none;
-    z-index: 20;
-  } */
 
   .gallery-track {
     width: 100%;
     overflow-x: auto;
     overflow-y: hidden;
     scroll-snap-type: x mandatory;
-    gap: 5vw;
     padding: 0 5vw;
     padding-right: 20vw; 
     height: 60vh;
@@ -188,7 +174,7 @@
   }
 
   .card {
-    width: 80vw; 
+    width: 100vw; 
     height: 100%;
     scroll-snap-align: center; 
   }
