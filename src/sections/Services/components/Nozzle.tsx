@@ -3,6 +3,8 @@
 import React, { memo } from "react";
 import styles from "../Services.module.css";
 
+import Image from "next/image";
+
 interface NozzleProps {
   startX: number;
   top: number;
@@ -21,12 +23,15 @@ const Nozzle = memo(({ startX, top, isReady, svgSize }: NozzleProps) => {
         top: `${top}px`
       }}
     >
-      <img 
+      <Image 
         src="/images/nozzle.png" 
         alt="Nozzle Tip" 
+        width={200}
+        height={200}
+        priority
         style={{ 
           width: '100%', 
-          height: '100%', 
+          height: 'auto', 
           objectFit: 'contain',
           display: 'block'
         }} 
