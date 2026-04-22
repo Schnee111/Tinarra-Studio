@@ -3,21 +3,18 @@
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { useLenis } from "lenis/react";
+import { useIsMobile } from "@/hooks/useIsMobile";
 import { StaggeredMenuToggle, StaggeredMenuOverlay } from "./StaggeredMenu";
 import styles from "./Navigation.module.css";
 
 export default function Navigation() {
   const [mounted, setMounted] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
+  const isMobile = useIsMobile();
   const lenis = useLenis();
- 
+
   useEffect(() => {
     setMounted(true);
-    const checkMobile = () => setIsMobile(window.innerWidth < 1024);
-    checkMobile();
-    window.addEventListener("resize", checkMobile);
-    return () => window.removeEventListener("resize", checkMobile);
   }, []);
  
   const handleScroll = (href: string) => {

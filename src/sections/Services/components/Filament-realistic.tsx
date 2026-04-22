@@ -58,7 +58,7 @@ const Filament = memo(({ pathLength, path, isMobile, isReady }: FilamentProps) =
           style={{
             pathLength,
             filter: isMobile ? 'none' : filamentFilterUrl
-          } as any}
+          }}
           initial={{ pathLength: 0 }}
           transition={{ d: { duration: 0 } }}
         />

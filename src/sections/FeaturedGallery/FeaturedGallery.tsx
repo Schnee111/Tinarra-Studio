@@ -1,5 +1,6 @@
-import React, { useRef, useState, useEffect, useMemo } from "react";
-import { motion, useScroll, useTransform, useInView } from "framer-motion";
+import React, { useRef, useState, useMemo } from "react";
+import { motion, useScroll, useTransform, useInView, MotionValue } from "framer-motion";
+import { useIsMobile } from "@/hooks/useIsMobile";
 import styles from "./FeaturedGallery.module.css";
 import Image from "next/image";
 
@@ -26,18 +27,12 @@ const items = [
   }
 ];
 
-export default function FeaturedGallery({ textColor, accentColor }: { textColor?: any, accentColor?: any }) {
+export default function FeaturedGallery({ textColor, accentColor }: { textColor?: MotionValue<string>, accentColor?: MotionValue<string> }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
-  const [isDesktop, setIsDesktop] = useState(false);
+  const isMobile = useIsMobile();
+  const isDesktop = !isMobile;
   const [activeIndex, setActiveIndex] = useState(0);
-
-  useEffect(() => {
-    const checkDesktop = () => setIsDesktop(window.innerWidth >= 768);
-    checkDesktop();
-    window.addEventListener('resize', checkDesktop);
-    return () => window.removeEventListener('resize', checkDesktop);
-  }, []);
   
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -132,10 +127,10 @@ const imageVariantsMobile = {
   exit: { scale: 1 }
 };
 
-const transitionBase = { duration: 0.8, ease: [0.22, 1, 0.36, 1] as any };
-const transitionMobile = { duration: 0.5, ease: [0.22, 1, 0.36, 1] as any };
+const transitionBase = { duration: 0.8, ease: [0.22, 1, 0.36, 1] as const };
+const transitionMobile = { duration: 0.5, ease: [0.22, 1, 0.36, 1] as const };
 
-const Card = React.memo(({ item, index, textColor, isDesktop }: { item: typeof items[0], index: number, textColor: any, isDesktop: boolean }) => {
+const Card = React.memo(({ item, index, textColor, isDesktop }: { item: typeof items[0], index: number, textColor: string, isDesktop: boolean }) => {
   const [isLoaded, setIsLoaded] = useState(false);
   const cardRef = useRef(null);
   const isInView = useInView(cardRef, { once: false, margin: "0px -10% 0px -10%" });
@@ -192,7 +187,7 @@ const Card = React.memo(({ item, index, textColor, isDesktop }: { item: typeof i
 
 Card.displayName = "Card";
 
-const RollingText = React.memo(({ text, noRoll = false, textColor }: { text: string, noRoll?: boolean, textColor: any }) => {
+const RollingText = React.memo(({ text, noRoll = false, textColor }: { text: string, noRoll?: boolean, textColor: string }) => {
   const words = useMemo(() => text.split(" "), [text]);
 
   return (
@@ -212,7 +207,7 @@ const RollingText = React.memo(({ text, noRoll = false, textColor }: { text: str
                   opacity: 1,
                   transition: { 
                     duration: 0.8, 
-                    ease: [0.22, 1, 0.36, 1] as any,
+                    ease: [0.22, 1, 0.36, 1] as const,
                     delay: i * 0.08 
                   } 
                 }

@@ -6,27 +6,26 @@ import { OrbitControls, CameraShake } from "@react-three/drei";
 import { useScroll, useTransform, motion, useMotionValueEvent } from "framer-motion";
 import { useLenis } from "lenis/react";
 import { Particles } from "@/components/canvas/CurlNoise3D/Particles";
+import { useIsMobile } from "@/hooks/useIsMobile";
 import styles from "./Hero.module.css";
 
 export default function Hero() {
   const containerRef = useRef<HTMLDivElement>(null);
   const [particleSize, setParticleSize] = useState(256);
   const [isCanvasActive, setIsCanvasActive] = useState(true);
+  const isMobile = useIsMobile();
 
   useEffect(() => {
-    // Determine particle count based on device heuristics
-    const isMobile = window.innerWidth < 768;
     const cores = navigator.hardwareConcurrency || 4;
 
     if (isMobile) {
-      setParticleSize(70); // Lower particle count for mobile
+      setParticleSize(70);
     } else if (cores >= 8) {
-      setParticleSize(260); // High-end devices
+      setParticleSize(260);
     } else {
-      setParticleSize(130); // Mid-range laptops
+      setParticleSize(130);
     }
 
-    // Performance Guard: Matikan render 3D jika di luar viewport
     const handleScrollOptimize = () => {
       if (window.scrollY > window.innerHeight) {
         setIsCanvasActive(false);
@@ -37,7 +36,7 @@ export default function Hero() {
 
     window.addEventListener("scroll", handleScrollOptimize, { passive: true });
     return () => window.removeEventListener("scroll", handleScrollOptimize);
-  }, []);
+  }, [isMobile]);
 
   const lenis = useLenis();
 
@@ -72,18 +71,12 @@ export default function Hero() {
   const footerBlurValue = useTransform(scrollYProgress, [0, 0.3], [0, 3]);
   const footerBlur = useTransform(footerBlurValue, (v) => `blur(${v}px)`);
 
-  // Detect Mobile for heavy effect stripping
-  const [isMobile, setIsMobile] = useState(false);
-  useEffect(() => {
-    setIsMobile(window.innerWidth < 1024);
-  }, []);
-
   return (
     <motion.section
       className={styles['hero-section']}
       id="home"
       ref={containerRef}
-      style={{ opacity: globalOpacity } as any}
+      style={{ opacity: globalOpacity }}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 1.5, ease: "easeOut" }}
@@ -105,7 +98,7 @@ export default function Hero() {
               focus={isMobile ? 4.7 : 3.3}
               curl={isMobile ? 0.4 : 0.4}
               size={particleSize}
-              scroll={scrollYProgress as any}
+              scroll={scrollYProgress as unknown as number}
               interactive={!isMobile}
             />
           </Suspense>
@@ -130,7 +123,7 @@ export default function Hero() {
           opacity: isMobile ? 1 : opacity,
           scale: isMobile ? 1 : scale,
           filter: isMobile ? "none" : blur
-        } as any}
+        }}
       >
         <div className={styles['title-group']}>
           <motion.h1
@@ -169,14 +162,14 @@ export default function Hero() {
           style={{
             opacity: isMobile ? 1 : footerOpacity,
             filter: isMobile ? "none" : footerBlur
-          } as any}
+          }}
         >
           <div className={styles['hero-scroll-wrapper']}>
             <a href="#story" onClick={handleScroll} className={styles['scroll-indicator-link']}>
               <div className={styles['scroll-indicator']}>
                 <motion.div
                   className={styles['scroll-dot']}
-                  style={{ transformOrigin: "top" } as any}
+                  style={{ transformOrigin: "top" }}
                   animate={{
                     height: [6, 20, 6, 6], // Natural pill stretch
                     y: [0, 0, 14, 0],      // Catch-up effect
@@ -214,7 +207,7 @@ function WordReveal({ text, delay = 0, isMobile = false }: { text: string, delay
             initial: { opacity: 0, filter: isMobile ? "none" : "blur(8px)", y: 10 },
             enter: { opacity: 1, filter: "blur(0px)", y: 0 }
           }}
-          transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] as any }}
+          transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
           className={styles['reveal-word']}
         >
           {word}&nbsp;

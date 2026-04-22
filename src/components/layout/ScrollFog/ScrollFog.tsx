@@ -1,23 +1,12 @@
 "use client";
 
 import { motion, useScroll, useTransform, useSpring } from "framer-motion";
-import { useEffect, useState } from "react";
+import { useIsMobile } from "@/hooks/useIsMobile";
 import styles from "./ScrollFog.module.css";
 
-/**
- * ScrollFog component creates a persistent bottom gradient (fog) 
- * that dynamically blurs the background only during specific sections.
- */
 export default function ScrollFog() {
   const { scrollYProgress } = useScroll();
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    const checkMobile = () => setIsMobile(window.innerWidth < 1024);
-    checkMobile();
-    window.addEventListener("resize", checkMobile);
-    return () => window.removeEventListener("resize", checkMobile);
-  }, []);
+  const isMobile = useIsMobile();
 
   // Define the blur active zones based on global scroll position (approximate)
   // Gallery/Tech starts around 0.3 - 0.7
@@ -44,7 +33,7 @@ export default function ScrollFog() {
       {/* Conditional Blur Layer */}
       <motion.div 
         className={styles['fog-blur']} 
-        style={{ backdropFilter: blurFilter } as any}
+        style={{ backdropFilter: blurFilter }}
       />
     </div>
   );

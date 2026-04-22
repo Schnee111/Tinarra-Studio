@@ -1,24 +1,15 @@
 "use client";
 
-import { useRef, useState, useEffect } from "react";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { useRef } from "react";
+import { motion, useScroll, useTransform, MotionValue } from "framer-motion";
+import { useIsMobile } from "@/hooks/useIsMobile";
 import styles from "./Manifesto.module.css";
 
 const text = "We turn digital polygons into physical realities. Precision-crafted in our local micro-factory.";
 
-export default function Manifesto({ textColor, mutedColor }: { textColor?: any, mutedColor?: any }) {
+export default function Manifesto({ textColor, mutedColor }: { textColor?: MotionValue<string>, mutedColor?: MotionValue<string> }) {
   const containerRef = useRef<HTMLDivElement>(null);
-  
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 1024);
-    };
-    checkMobile();
-    window.addEventListener("resize", checkMobile);
-    return () => window.removeEventListener("resize", checkMobile);
-  }, []);
+  const isMobile = useIsMobile();
 
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -51,7 +42,7 @@ export default function Manifesto({ textColor, mutedColor }: { textColor?: any, 
   );
 }
 
-function Word({ word, progress, range, activeColor, inactiveColor, isMobile }: { word: string, progress: any, range: [number, number], activeColor?: any, inactiveColor?: any, isMobile: boolean }) {
+function Word({ word, progress, range, activeColor, inactiveColor, isMobile }: { word: string, progress: MotionValue<number>, range: [number, number], activeColor?: MotionValue<string>, inactiveColor?: MotionValue<string>, isMobile: boolean }) {
   // Fix: Move the 'reveal' logic to Opacity, letting the Prop handle the base color.
   const revealProgress = useTransform(progress, range, [0, 1]);
   const opacity = useTransform(revealProgress, [0, 1], [0.1, 1]);

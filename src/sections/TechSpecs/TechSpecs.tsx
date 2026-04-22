@@ -1,26 +1,17 @@
 "use client";
 
-import { useRef, useState, useMemo, useEffect } from "react";
-import { motion, useScroll, useTransform, useInView } from "framer-motion";
+import { useRef, useState, useMemo } from "react";
+import { motion, useScroll, useTransform, useInView, MotionValue } from "framer-motion";
+import { useIsMobile } from "@/hooks/useIsMobile";
 import styles from "./TechSpecs.module.css";
 import Image from "next/image";
 
 const MotionImage = motion.create(Image);
 
-export default function TechSpecs({ textColor, mutedColor, accentColor }: { textColor?: any, mutedColor?: any, accentColor?: any }) {
+export default function TechSpecs({ textColor, mutedColor, accentColor }: { textColor?: MotionValue<string>, mutedColor?: MotionValue<string>, accentColor?: MotionValue<string> }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [isLoaded, setIsLoaded] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    const checkMobile = () => {
-      // Synchronized with CSS 992px breakpoint
-      setIsMobile(window.innerWidth < 992);
-    };
-    checkMobile();
-    window.addEventListener("resize", checkMobile);
-    return () => window.removeEventListener("resize", checkMobile);
-  }, []);
+  const isMobile = useIsMobile();
   
   // Parallax tracking bound to this section's visibility in the viewport
   const { scrollYProgress } = useScroll({
@@ -77,7 +68,7 @@ export default function TechSpecs({ textColor, mutedColor, accentColor }: { text
           
           <motion.div 
             className={styles['tech-specs-list']}
-            style={{ "--dot-color": accentColor } as any}
+            style={{ "--dot-color": accentColor } as React.CSSProperties}
             variants={{
               initial: { opacity: 0 },
               enter: { opacity: 1, transition: { staggerChildren: 0.04, delayChildren: 1.0 } }
@@ -145,7 +136,7 @@ function WordTypewriter({ text, color, isMobile = false }: { text: string, color
               opacity: 1, 
               filter: "blur(0px)", 
               x: 0,
-              transition: { duration: 1.2, ease: [0.16, 1, 0.3, 1] as any } 
+              transition: { duration: 1.2, ease: [0.16, 1, 0.3, 1] } 
             }
           }}
           style={{ display: "inline-block", marginRight: "0.3em", color }}

@@ -202,7 +202,7 @@ export const StaggeredMenuOverlay: React.FC<{
   return (
     <div 
       className={`staggered-menu-overlay-container ${isOpen ? 'is-open' : ''}`}
-      style={{ ['--sm-accent' as any]: accentColor }}
+      style={{ '--sm-accent': accentColor } as React.CSSProperties}
     >
       <div className="sm-backdrop" onClick={onClose} />
 

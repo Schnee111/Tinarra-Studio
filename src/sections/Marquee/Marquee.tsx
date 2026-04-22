@@ -1,19 +1,20 @@
 "use client";
 
-import { useRef, useEffect, useState } from "react";
-import { 
-  motion, 
-  useScroll, 
-  useSpring, 
-  useTransform, 
-  useVelocity, 
+import { useRef, useEffect } from "react";
+import {
+  motion,
+  useScroll,
+  useSpring,
+  useTransform,
+  useVelocity,
   useAnimationFrame,
-  useMotionValue 
+  useMotionValue
 } from "framer-motion";
 import { wrap } from "framer-motion";
 import Link from "next/link";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useIsMobile } from "@/hooks/useIsMobile";
 import styles from "./Marquee.module.css";
 
 if (typeof window !== "undefined") {
@@ -32,31 +33,26 @@ interface VelocityTextProps {
   numCopies?: number;
 }
 
-function VelocityText({ 
-  children, 
+function VelocityText({
+  children,
   baseVelocity = 100,
   damping = 50,
   stiffness = 400,
   numCopies = 2
 }: VelocityTextProps) {
   const baseX = useMotionValue(0);
-  const [isMobile, setIsMobile] = useState(false);
+  const isMobile = useIsMobile();
   const containerRef = useRef<HTMLDivElement>(null);
-  const [isInView, setIsInView] = useState(false);
+  const isInViewRef = useRef(false);
 
   useEffect(() => {
-    const checkMobile = () => setIsMobile(window.innerWidth < 768);
-    checkMobile();
-    window.addEventListener("resize", checkMobile);
-
     const observer = new IntersectionObserver(
-      ([entry]) => setIsInView(entry.isIntersecting),
+      ([entry]) => { isInViewRef.current = entry.isIntersecting; },
       { threshold: 0 }
     );
     if (containerRef.current) observer.observe(containerRef.current);
 
     return () => {
-      window.removeEventListener("resize", checkMobile);
       observer.disconnect();
     };
   }, []);
@@ -75,8 +71,7 @@ function VelocityText({
 
   const directionFactor = useRef<number>(1);
   useAnimationFrame((t, delta) => {
-    // OPTIMASI: Hanya pindahkan marquee jika sedang di dalam viewport
-    if (!isInView) return;
+    if (!isInViewRef.current) return;
 
     let moveBy = directionFactor.current * baseVelocity * (delta / 1000);
 
@@ -153,22 +148,15 @@ interface FocusRevealProps {
   animationDuration?: number;
 }
 
-function FocusReveal({ 
-  children, 
-  scrollStart = "top bottom-=50%", 
+function FocusReveal({
+  children,
+  scrollStart = "top bottom-=50%",
   scrollEnd = "bottom center+=50%",
   stagger = 0.1,
   animationDuration = 1.5
 }: FocusRevealProps) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    const checkMobile = () => setIsMobile(window.innerWidth < 768);
-    checkMobile();
-    window.addEventListener("resize", checkMobile);
-    return () => window.removeEventListener("resize", checkMobile);
-  }, []);
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     if (!containerRef.current) return;

@@ -153,7 +153,7 @@ export default function Services() {
 
       <motion.div 
         className={styles['svg-container-logic']}
-        style={{ opacity: pathOpacity } as any}
+        style={{ opacity: pathOpacity }}
       >
         <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" style={{ overflow: 'visible' }}>
           {isReady && svgSize.width > 0 && (
@@ -214,7 +214,7 @@ function LusionTitle({ line1, line2, reverse = false, isMobile = false }: { line
       <motion.div 
         layout={!isMobile} 
         className={styles['lusion-line-wrapper']} 
-        style={{ justifyContent: currentAlign } as any} 
+        style={{ justifyContent: currentAlign }} 
         transition={isMobile ? { duration: 0 } : { layout: { duration: 1.2, ease: [0.65, 0, 0.35, 1] } }}
       >
         <motion.div layout={!isMobile} className={styles['lusion-mask-top']}>
@@ -250,7 +250,7 @@ function LusionTitle({ line1, line2, reverse = false, isMobile = false }: { line
       <motion.div 
         layout={!isMobile} 
         className={styles['lusion-line-wrapper']} 
-        style={{ justifyContent: endAlign } as any} 
+        style={{ justifyContent: endAlign }} 
         transition={isMobile ? { duration: 0 } : { layout: { duration: 1.2, ease: [0.65, 0, 0.35, 1] } }}
       >
         <motion.div layout={!isMobile} className={styles['lusion-mask-bottom']}>

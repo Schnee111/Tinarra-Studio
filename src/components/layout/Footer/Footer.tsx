@@ -1,23 +1,17 @@
 "use client";
 
 import styles from "./Footer.module.css";
-import { useRef, useState, useEffect, useMemo } from "react";
+import { useRef, useMemo } from "react";
 import Link from "next/link";
-import { motion, useInView } from "framer-motion";
+import { motion, useInView, Variants } from "framer-motion";
 import { useLenis } from "lenis/react";
+import { useIsMobile } from "@/hooks/useIsMobile";
 
 export default function Footer() {
   const year = new Date().getFullYear();
   const footerRef = useRef(null);
   const isInView = useInView(footerRef, { once: false, amount: 0.1 });
-
-  const [isMobile, setIsMobile] = useState(false);
-  useEffect(() => {
-    const checkMobile = () => setIsMobile(window.innerWidth < 1024);
-    checkMobile();
-    window.addEventListener("resize", checkMobile);
-    return () => window.removeEventListener("resize", checkMobile);
-  }, []);
+  const isMobile = useIsMobile();
 
   const containerVariants = {
     initial: { opacity: 0 },
@@ -28,7 +22,7 @@ export default function Footer() {
   };
 
   // Optical Focus Reveal (Lens focus effect)
-  const focusVariants = {
+  const focusVariants: Variants = {
     initial: { 
       opacity: 0, 
       scale: 0.95, 
@@ -38,7 +32,7 @@ export default function Footer() {
       opacity: 1, 
       scale: 1, 
       filter: "blur(0px)",
-      transition: { duration: 1, ease: [0.16, 1, 0.3, 1] as any } 
+      transition: { duration: 1, ease: [0.16, 1, 0.3, 1] } 
     }
   };
 
@@ -130,7 +124,7 @@ export default function Footer() {
                 transition={{ 
                   duration: 1.2, 
                   delay: index * 0.04, 
-                  ease: [0.16, 1, 0.3, 1] as any 
+                  ease: [0.16, 1, 0.3, 1] 
                 }}
                 viewport={{ once: false }}
               >
@@ -169,7 +163,7 @@ function WordReveal({ text, delay = 0, isMobile = false }: { text: string, delay
               opacity: 1, 
               filter: "blur(0px)", 
               x: 0,
-              transition: { duration: 1.2, ease: [0.16, 1, 0.3, 1] as any } 
+              transition: { duration: 1.2, ease: [0.16, 1, 0.3, 1] } 
             }
           }}
           style={{ display: "inline-block", marginRight: "0.25em" }}
