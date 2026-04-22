@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 import { useEffect, useRef, useState } from "react";
 
 export default function CustomCursor() {
@@ -12,32 +12,28 @@ export default function CustomCursor() {
     let isHovering = false;
     let mouseX = window.innerWidth / 2, mouseY = window.innerHeight / 2;
     let outlineX = mouseX, outlineY = mouseY;
-    
-    // Animation states
+
     let scaleDot = 1;
     let scaleOutline = 1;
     let bgOpacity = 0;
-    
-    // Physics variables for the Bouncy effect (Spring mechanics)
-    let outlineScaleVelocity = 0;
-      const springStiffness = 0.15;  // Speed of the pull (lower = slower)
-      const springDamping = 0.75;    // Resistance (lower = more bouncy/jelly)
 
-      const animate = () => {
-      // Smooth position interpolation (slower and more jelly)
+    let outlineScaleVelocity = 0;
+    const springStiffness = 0.15;
+    const springDamping = 0.75;
+
+    let rafId: number;
+
+    const animate = () => {
       outlineX += (mouseX - outlineX) * 0.2;
       outlineY += (mouseY - outlineY) * 0.2;
 
-      // Target values
       const targetScaleDot = isHovering ? 0 : 1;
-      const targetScaleOutline = isHovering ? 2.2 : 1; // Scaled down 
-      const targetBgOpacity = isHovering ? 1 : 0; 
-      
-      // Standard LERP for dot and background opacity
+      const targetScaleOutline = isHovering ? 2.2 : 1;
+      const targetBgOpacity = isHovering ? 1 : 0;
+
       scaleDot += (targetScaleDot - scaleDot) * 0.2;
       bgOpacity += (targetBgOpacity - bgOpacity) * 0.2;
 
-      // SPRING PHYSICS for outer circle scaling (Lusion.labs bouncy effect)
       const scaleForce = (targetScaleOutline - scaleOutline) * springStiffness;
       outlineScaleVelocity += scaleForce;
       outlineScaleVelocity *= springDamping;
@@ -52,10 +48,10 @@ export default function CustomCursor() {
         outlineRef.current.style.borderColor = `rgba(255, 255, 255, 1)`;
       }
 
-      requestAnimationFrame(animate);
+      rafId = requestAnimationFrame(animate);
     };
 
-    requestAnimationFrame(animate);
+    rafId = requestAnimationFrame(animate);
 
     const handleMouseMove = (e: MouseEvent) => {
       mouseX = e.clientX;
@@ -74,6 +70,7 @@ export default function CustomCursor() {
     window.addEventListener("mousemove", handleMouseMove);
     window.addEventListener("mouseover", handleMouseOver);
     return () => {
+      cancelAnimationFrame(rafId);
       window.removeEventListener("mousemove", handleMouseMove);
       window.removeEventListener("mouseover", handleMouseOver);
     };
@@ -83,23 +80,23 @@ export default function CustomCursor() {
 
   return (
     <>
-      <div 
-        ref={dotRef} 
-        className="cursor-dot" 
-        style={{ 
-          backgroundColor: '#fff', 
+      <div
+        ref={dotRef}
+        className="cursor-dot"
+        style={{
+          backgroundColor: '#fff',
           mixBlendMode: 'difference',
-          zIndex: 10000 
-        }} 
+          zIndex: 10000
+        }}
       />
-      <div 
-        ref={outlineRef} 
-        className="cursor-outline" 
-        style={{ 
+      <div
+        ref={outlineRef}
+        className="cursor-outline"
+        style={{
           mixBlendMode: 'difference',
           zIndex: 9999,
           border: '1px solid #fff'
-        }} 
+        }}
       />
     </>
   );
