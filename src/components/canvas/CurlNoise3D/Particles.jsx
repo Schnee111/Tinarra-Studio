@@ -1,7 +1,7 @@
 "use client";
 
 import * as THREE from 'three'
-import { useMemo, useState, useRef } from 'react'
+import { useMemo, useState, useRef, useEffect } from 'react'
 import { createPortal, useFrame } from '@react-three/fiber'
 import { useFBO } from '@react-three/drei'
 import './materials'
@@ -20,6 +20,26 @@ export function Particles({ speed = 100, fov = 20, aperture = 1.8, focus = 5.1, 
     format: THREE.RGBAFormat,
     type: THREE.FloatType
   })
+
+  // Cleanup FBO WebGL render target & textures on unmount
+  useEffect(() => {
+    const currentSim = simRef.current;
+    const currentRender = renderRef.current;
+    return () => {
+      if (target) {
+        target.dispose()
+      }
+      if (currentSim?.uniforms?.positions?.value) {
+        currentSim.uniforms.positions.value.dispose()
+      }
+      if (currentSim) {
+        currentSim.dispose()
+      }
+      if (currentRender) {
+        currentRender.dispose()
+      }
+    }
+  }, [target])
   
   // Create an invisible plane to intercept the mouse raycast
   const dummyPlane = useMemo(() => new THREE.Plane(new THREE.Vector3(0, 0, 1), 0), []);

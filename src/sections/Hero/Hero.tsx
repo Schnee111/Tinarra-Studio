@@ -3,7 +3,7 @@
 import { useRef, useState, useEffect, MouseEvent, Suspense } from "react";
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls, CameraShake } from "@react-three/drei";
-import { useScroll, useTransform, motion, useMotionValueEvent } from "framer-motion";
+import { useScroll, useTransform, motion } from "framer-motion";
 import { useLenis } from "lenis/react";
 import { Particles } from "@/components/canvas/CurlNoise3D/Particles";
 import { useIsMobile } from "@/hooks/useIsMobile";
@@ -11,32 +11,27 @@ import styles from "./Hero.module.css";
 
 export default function Hero() {
   const containerRef = useRef<HTMLDivElement>(null);
-  const [particleSize, setParticleSize] = useState(256);
-  const [isCanvasActive, setIsCanvasActive] = useState(true);
   const isMobile = useIsMobile();
+  const particleSize = isMobile ? 70 : (typeof navigator !== "undefined" && (navigator.hardwareConcurrency || 4) >= 8 ? 260 : 130);
+  const [isCanvasActive, setIsCanvasActive] = useState(true);
 
   useEffect(() => {
-    const cores = navigator.hardwareConcurrency || 4;
+    const container = containerRef.current;
+    if (!container) return;
 
-    if (isMobile) {
-      setParticleSize(70);
-    } else if (cores >= 8) {
-      setParticleSize(260);
-    } else {
-      setParticleSize(130);
-    }
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsCanvasActive(entry.isIntersecting);
+      },
+      { root: null, rootMargin: "0px", threshold: 0 }
+    );
 
-    const handleScrollOptimize = () => {
-      if (window.scrollY > window.innerHeight) {
-        setIsCanvasActive(false);
-      } else {
-        setIsCanvasActive(true);
-      }
+    observer.observe(container);
+
+    return () => {
+      observer.disconnect();
     };
-
-    window.addEventListener("scroll", handleScrollOptimize, { passive: true });
-    return () => window.removeEventListener("scroll", handleScrollOptimize);
-  }, [isMobile]);
+  }, []);
 
   const lenis = useLenis();
 
@@ -84,6 +79,7 @@ export default function Hero() {
       <div className={styles['hero-fullscreen-3d']}>
         <Canvas
           frameloop={isCanvasActive ? "always" : "never"}
+          dpr={[1, 1.8]}
           camera={{ position: [0, 0, 4], fov: 45 }}
           resize={{ offsetSize: true }}
           gl={{ antialias: !isMobile, powerPreference: "high-performance" }}

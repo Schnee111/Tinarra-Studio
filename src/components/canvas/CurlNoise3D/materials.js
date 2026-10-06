@@ -197,11 +197,9 @@ export class SimulationMaterial extends THREE.ShaderMaterial {
         pos = curl(pos * uCurlFreq + t);
         curlPos = curl(curlPos * uCurlFreq + t);
         
-        // Restore full complexity
+        // Restore full complexity (octave 1..3, pruned octave 4 & 5 for ALU perf)
         curlPos += curl(curlPos * uCurlFreq * 2.0) * 0.5;
         curlPos += curl(curlPos * uCurlFreq * 4.0) * 0.25;
-        curlPos += curl(curlPos * uCurlFreq * 8.0) * 0.125;
-        curlPos += curl(pos * uCurlFreq * 16.0) * 0.0625;
         
         vec3 finalPos = mix(pos, curlPos, cnoise(pos + t));
 
