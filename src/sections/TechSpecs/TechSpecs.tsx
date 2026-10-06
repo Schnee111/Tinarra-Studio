@@ -109,7 +109,6 @@ export default function TechSpecs({ textColor, mutedColor, accentColor }: { text
             animate={{ scale: isLoaded ? 1 : 1.1 }}
             transition={{ duration: 1.2, ease: "easeOut" }}
             onLoad={() => setIsLoaded(true)}
-            priority
           />
         </motion.div>
 

@@ -28,7 +28,6 @@ const Nozzle = memo(({ startX, top, isReady, svgSize }: NozzleProps) => {
         alt="Nozzle Tip" 
         width={200}
         height={200}
-        priority
         style={{ 
           width: '100%', 
           height: 'auto', 

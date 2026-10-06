@@ -1,6 +1,6 @@
 
 import type { Metadata } from "next";
-import { Syne, Manrope, Space_Grotesk, Bricolage_Grotesque, Archivo_Black, Plus_Jakarta_Sans } from "next/font/google";
+import { Syne, Manrope, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 
 const syne = Syne({
