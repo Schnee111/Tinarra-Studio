@@ -11,17 +11,14 @@ export default function ScrollFog() {
   // Define the blur active zones based on global scroll position (approximate)
   // Gallery/Tech starts around 0.3 - 0.7
   // Footer starts around 0.95 - 1.0
-  // Note: These values are mapped specifically in the styles to ensure 
-  // the blur fades in and out smoothly.
-  
-  const blurAmount = useTransform(
+  // Note: We use opacity crossfade over a fixed blur layer to eliminate GPU re-rasterization during scroll.
+  const blurOpacityTarget = useTransform(
     scrollYProgress,
     [0, 0.2, 0.3, 0.7, 0.8, 0.9, 0.95, 1],
-    [0, 0, 8, 8, 0, 0, 8, 8] // Blurs at 0.3-0.7 (Gallery/Tech) and 0.95-1 (Footer)
+    [0, 0, 1, 1, 0, 0, 1, 1] // Fully active at 0.3-0.7 (Gallery/Tech) and 0.95-1 (Footer)
   );
 
-  const springBlur = useSpring(blurAmount, { damping: 30, stiffness: 200 });
-  const blurFilter = useTransform(springBlur, (v) => `blur(${v}px)`);
+  const springOpacity = useSpring(blurOpacityTarget, { damping: 30, stiffness: 200 });
 
   if (isMobile) return null;
 
@@ -30,10 +27,10 @@ export default function ScrollFog() {
       {/* Permanent Gradient Layer */}
       <div className={styles['fog-gradient']} />
       
-      {/* Conditional Blur Layer */}
+      {/* Fixed Blur Layer with Opacity Crossfade */}
       <motion.div 
         className={styles['fog-blur']} 
-        style={{ backdropFilter: blurFilter }}
+        style={{ opacity: springOpacity }}
       />
     </div>
   );
