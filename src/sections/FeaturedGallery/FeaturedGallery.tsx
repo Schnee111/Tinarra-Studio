@@ -163,7 +163,6 @@ const Card = React.memo(({ item, index, textColor, isDesktop }: { item: typeof i
           className={styles['card-image']} 
           sizes="(max-width: 768px) 100vw, 60vw"
           onLoad={() => setIsLoaded(true)}
-          priority={index <= 1}
         />
       </motion.div>
 
