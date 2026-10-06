@@ -1,17 +1,17 @@
 "use client";
 
 import React, { memo, useId } from "react";
-import { motion } from "framer-motion";
+import { motion, type MotionValue } from "framer-motion";
 import styles from "../Services.module.css";
 
 interface FilamentProps {
-  pathLength: any;
+  pathLength: MotionValue<number>;
   path: string;
   isMobile: boolean;
   isReady: boolean;
 }
 
-const Filament = memo(({ pathLength, path, isMobile, isReady }: FilamentProps) => {
+const Filament = memo(({ pathLength, path, isMobile }: FilamentProps) => {
   const filterId = useId();
   const filamentFilterUrl = `url(#${filterId})`;
 
@@ -29,8 +29,9 @@ const Filament = memo(({ pathLength, path, isMobile, isReady }: FilamentProps) =
         <filter
           id={filterId}
           x="-10%" y="-10%" width="120%" height="120%"
+          filterUnits="userSpaceOnUse"
+          primitiveUnits="userSpaceOnUse"
           colorInterpolationFilters="sRGB"
-          {...(isReady ? { filterRes: "100" } : {})}
         >
           {/* 1. Create a 3D 'bump' from the path. stdDeviation increased for rounder profile. */}
           <feGaussianBlur in="SourceAlpha" stdDeviation="5.5" result="blur" />
