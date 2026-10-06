@@ -6,21 +6,41 @@ import { useProgress } from "@react-three/drei";
 import styles from "./Preloader.module.css";
 
 export default function Preloader() {
-  // active akan bernilai true jika ada aset yang sedang diproses oleh R3F
   const { progress: realProgress, active } = useProgress();
   const [isLoading, setIsLoading] = useState(true);
-  
+  const [is3DReady, setIs3DReady] = useState(false);
+
   const numberRef = useRef<HTMLSpanElement>(null);
   const animatedProgress = useMotionValue(0);
   const pathLength = useTransform(animatedProgress, [0, 100], [0, 1]);
 
   useEffect(() => {
-    // Mekanisme Fallback: Jika tidak ada aset (active=false), 
-    // kita simulasikan angka menuju 100 untuk estetika.
-    const targetValue = active ? realProgress : 100;
+    const handle3DReady = () => {
+      setIs3DReady(true);
+    };
+
+    window.addEventListener("tinarra-3d-ready", handle3DReady);
+    return () => window.removeEventListener("tinarra-3d-ready", handle3DReady);
+  }, []);
+
+  useEffect(() => {
+    let targetValue = 100;
+    let duration = 3.0;
+
+    if (active) {
+      targetValue = realProgress;
+      duration = 0.5;
+    } else if (is3DReady) {
+      targetValue = 100;
+      duration = 0.4;
+    } else {
+      // Fallback awal sebelum 3D ready atau jika 3D ready tertunda
+      targetValue = 100;
+      duration = 3.0;
+    }
 
     const controls = animate(animatedProgress, targetValue, {
-      duration: active ? 0.5 : 3.0, // Berjalan perlahan (3 detik) jika hanya simulasi
+      duration,
       ease: [0.65, 0, 0.35, 1],
       onUpdate: (latest) => {
         if (numberRef.current) {
@@ -28,15 +48,15 @@ export default function Preloader() {
         }
       },
       onComplete: () => {
-        // Jika sudah mencapai 100 atau simulasi selesai, tutup loader
         if (targetValue === 100 || !active) {
-          setTimeout(() => setIsLoading(false), 800);
+          const exitDelay = is3DReady ? 150 : 800;
+          setTimeout(() => setIsLoading(false), exitDelay);
         }
       }
     });
 
     return () => controls.stop();
-  }, [realProgress, active, animatedProgress]);
+  }, [realProgress, active, is3DReady, animatedProgress]);
 
   return (
     <AnimatePresence>

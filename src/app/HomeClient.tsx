@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef } from "react";
-import { motion, useScroll, useTransform, MotionValue } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 import Navigation from "@/components/layout/Navigation/Navigation";
 import Footer from "@/components/layout/Footer/Footer";
 import Hero from "@/sections/Hero/Hero";
@@ -28,7 +28,7 @@ export default function HomeClient() {
 
   const textColor = useTransform(
     scrollYProgress,
-    [0, 0.2, 0.8, 1],
+    [0, 0.25, 0.75, 1],
     ["#ffffff", "#000000", "#000000", "#ffffff"]
   );
 
