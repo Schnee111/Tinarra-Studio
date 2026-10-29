@@ -2,9 +2,9 @@ let cachedDesktopParticleSize: number | null = null;
 
 /**
  * Dynamic device tier detector for desktop WebGL particle rendering.
- * Defaults desktop to high-fidelity (420 = 176,400 particles) for rich visual mass,
+ * Defaults desktop to high-fidelity power-of-two (512 = 262,144 particles) for rich visual mass,
  * and gracefully scales down only on resource-constrained or software-emulated environments:
- * - High Tier (Default for modern desktops, Apple Silicon, modern laptops): 420 (176,400 particles)
+ * - High Tier (Default for modern desktops, Apple Silicon, modern laptops): 512 (262,144 particles)
  * - Mid Tier (Cores <= 4 on basic integrated graphics): 320 (102,400 particles)
  * - Low Tier (Software rasterizer, SwiftShader, legacy Intel HD): 260 (67,600 particles)
  */
@@ -14,10 +14,10 @@ export function getDesktopParticleSize(): number {
   }
 
   if (typeof window === "undefined" || typeof navigator === "undefined") {
-    return 420; // Safe desktop SSR default
+    return 512; // Safe desktop SSR default
   }
 
-  let detectedSize = 420;
+  let detectedSize = 512;
 
   try {
     const canvas = document.createElement("canvas");
@@ -59,7 +59,7 @@ export function getDesktopParticleSize(): number {
         ) {
           detectedSize = 320;
         } else {
-          detectedSize = 420;
+          detectedSize = 512;
         }
       }
     } else {
@@ -67,11 +67,11 @@ export function getDesktopParticleSize(): number {
       if (cores && cores <= 4) {
         detectedSize = 320;
       } else {
-        detectedSize = 420;
+        detectedSize = 512;
       }
     }
   } catch {
-    detectedSize = 420;
+    detectedSize = 512;
   }
 
   cachedDesktopParticleSize = detectedSize;
