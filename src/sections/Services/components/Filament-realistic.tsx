@@ -28,9 +28,7 @@ const Filament = memo(({ pathLength, path, isMobile }: FilamentProps) => {
         {/* ── Realistic 3D Tubular Lighting Filter ── */}
         <filter
           id={filterId}
-          x="-10%" y="-10%" width="120%" height="120%"
-          filterUnits="userSpaceOnUse"
-          primitiveUnits="userSpaceOnUse"
+          x="-20%" y="-20%" width="140%" height="200%"
           colorInterpolationFilters="sRGB"
         >
           {/* 1. Create a 3D 'bump' from the path. stdDeviation increased for rounder profile. */}
