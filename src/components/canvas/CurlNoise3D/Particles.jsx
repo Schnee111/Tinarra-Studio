@@ -6,7 +6,7 @@ import { createPortal, useFrame } from '@react-three/fiber'
 import { useFBO } from '@react-three/drei'
 import './materials'
 
-export function Particles({ speed = 100, fov = 20, aperture = 1.8, focus = 5.1, curl = 0.25, size = 420, scroll = 0, interactive = true, ...props }) {
+export function Particles({ speed = 100, fov = 20, aperture = 1.8, focus = 5.1, curl = 0.25, size = 512, scroll = 0, interactive = true, ...props }) {
   const simRef = useRef()
   const renderRef = useRef()
   // Set up FBO
