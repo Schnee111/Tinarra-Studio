@@ -1,11 +1,12 @@
 let cachedDesktopParticleSize: number | null = null;
 
 /**
- * Heuristic device tier detector for desktop WebGL particle rendering.
- * Scales particle FBO resolution dynamically:
- * - High Tier (Dedicated GPU / Apple Silicon / >=8 cores & high RAM): 420 (176,400 particles)
- * - Mid Tier (Modern iGPU Iris Xe/Radeon / 6-8 cores): 320 (102,400 particles)
- * - Entry Tier (Basic iGPU / low cores): 240 (57,600 particles)
+ * Dynamic device tier detector for desktop WebGL particle rendering.
+ * Defaults desktop to high-fidelity (420 = 176,400 particles) for rich visual mass,
+ * and gracefully scales down only on resource-constrained or software-emulated environments:
+ * - High Tier (Default for modern desktops, Apple Silicon, modern laptops): 420 (176,400 particles)
+ * - Mid Tier (Cores <= 4 on basic integrated graphics): 320 (102,400 particles)
+ * - Low Tier (Software rasterizer, SwiftShader, legacy Intel HD): 260 (67,600 particles)
  */
 export function getDesktopParticleSize(): number {
   if (cachedDesktopParticleSize !== null) {
@@ -13,10 +14,10 @@ export function getDesktopParticleSize(): number {
   }
 
   if (typeof window === "undefined" || typeof navigator === "undefined") {
-    return 320; // Safe SSR default
+    return 420; // Safe desktop SSR default
   }
 
-  let detectedSize = 320;
+  let detectedSize = 420;
 
   try {
     const canvas = document.createElement("canvas");
@@ -31,68 +32,46 @@ export function getDesktopParticleSize(): number {
       ) as string;
       const rendererLower = (renderer || "").toLowerCase();
 
-      // Clean up WebGL context if loseContext extension is supported
       const loseContext = gl.getExtension("WEBGL_lose_context");
       if (loseContext) {
         loseContext.loseContext();
       }
 
-      const isHighEndGPU =
-        rendererLower.includes("apple") ||
-        rendererLower.includes("nvidia") ||
-        rendererLower.includes("geforce") ||
-        rendererLower.includes("rtx") ||
-        rendererLower.includes("gtx") ||
-        rendererLower.includes("quadro") ||
-        (rendererLower.includes("radeon") &&
-          (rendererLower.includes("rx") ||
-            rendererLower.includes("pro")));
-
-      const isMidEndGPU =
-        rendererLower.includes("iris") ||
-        rendererLower.includes("xe") ||
-        rendererLower.includes("radeon") ||
-        rendererLower.includes("adreno");
-
-      const isLowEndGPU =
-        rendererLower.includes("hd graphics") ||
-        rendererLower.includes("uhd graphics") ||
+      const isSoftwareOrVirtual =
         rendererLower.includes("swiftshader") ||
         rendererLower.includes("llvmpipe") ||
-        rendererLower.includes("software");
+        rendererLower.includes("software rasterizer") ||
+        rendererLower.includes("virtualbox") ||
+        rendererLower.includes("vmware");
 
-      if (isHighEndGPU) {
-        detectedSize = 420;
-      } else if (isMidEndGPU) {
-        detectedSize = 320;
-      } else if (isLowEndGPU) {
-        const cores = navigator.hardwareConcurrency || 4;
-        const memory =
-          (navigator as unknown as { deviceMemory?: number }).deviceMemory || 4;
-        detectedSize = cores >= 8 && memory >= 8 ? 320 : 240;
+      const isOldLegacyIntegrated =
+        rendererLower.includes("hd graphics") && !rendererLower.includes("uhd");
+
+      if (isSoftwareOrVirtual || isOldLegacyIntegrated) {
+        detectedSize = 260;
       } else {
-        // Unidentified GPU - fall back to hardwareConcurrency & deviceMemory
-        const cores = navigator.hardwareConcurrency || 4;
-        const memory =
-          (navigator as unknown as { deviceMemory?: number }).deviceMemory || 4;
-        if (cores >= 8 && memory >= 8) {
-          detectedSize = 420;
-        } else if (cores >= 6 || memory >= 6) {
+        const cores = navigator.hardwareConcurrency;
+        // Only throttle if hardwareConcurrency explicitly reports <= 4 cores on basic integrated graphics
+        if (
+          cores &&
+          cores <= 4 &&
+          (rendererLower.includes("intel") || rendererLower.includes("uhd"))
+        ) {
           detectedSize = 320;
         } else {
-          detectedSize = 240;
+          detectedSize = 420;
         }
       }
     } else {
-      // No WebGL context available for probing, fall back to CPU/RAM
-      const cores = navigator.hardwareConcurrency || 4;
-      const memory =
-        (navigator as unknown as { deviceMemory?: number }).deviceMemory || 4;
-      detectedSize = cores >= 8 && memory >= 8 ? 420 : (cores >= 6 ? 320 : 240);
+      const cores = navigator.hardwareConcurrency;
+      if (cores && cores <= 4) {
+        detectedSize = 320;
+      } else {
+        detectedSize = 420;
+      }
     }
   } catch {
-    // If probing throws for any reason, default to 320
-    detectedSize = 320;
+    detectedSize = 420;
   }
 
   cachedDesktopParticleSize = detectedSize;
