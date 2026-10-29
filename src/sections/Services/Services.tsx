@@ -86,14 +86,6 @@ export default function Services() {
             S ${w * 1.4} ${h * 1.1} ${w * 0.6} ${h * 1.5}`;
   }, [svgSize, startX, isMobile]);
 
-  const initialAngle = useMemo(() => {
-    if (svgSize.width === 0 || svgSize.height === 0) return 0;
-    const dy = (svgSize.height * 0.15) - (svgSize.height * 0.25);
-    const dx = (svgSize.width * 0.4) - startX;
-    const angleRadians = Math.atan2(dy, dx);
-    return angleRadians * (180 / Math.PI);
-  }, [svgSize, startX]);
-
   return (
     <section className={styles['services-section']} ref={containerRef} id="services">
       <div className={styles['grid-overlay']} />

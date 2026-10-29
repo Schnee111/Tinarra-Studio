@@ -1,6 +1,7 @@
 .services-section {
   position: relative;
   background-color: transparent;
+  z-index: 20;
   /* Removal of overflow/isolation allows the difference blend to see through the backdrop */
 }
 

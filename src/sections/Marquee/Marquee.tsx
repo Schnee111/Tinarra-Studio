@@ -230,7 +230,7 @@ export default function Marquee() {
             scrollEnd='bottom bottom-=20%'
             stagger={0.1}
           >
-            LET'S WORK TOGETHER
+            LET&apos;S WORK TOGETHER
           </FocusReveal>
 
           <div className={styles['btn-icon']}>
