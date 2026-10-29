@@ -1,18 +1,19 @@
 "use client";
 
-import { useRef, useState, useEffect, MouseEvent, Suspense } from "react";
+import { useRef, useState, useEffect, useMemo, MouseEvent, Suspense } from "react";
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls, CameraShake } from "@react-three/drei";
 import { useScroll, useTransform, motion } from "framer-motion";
 import { useLenis } from "lenis/react";
 import { Particles } from "@/components/canvas/CurlNoise3D/Particles";
 import { useIsMobile } from "@/hooks/useIsMobile";
+import { getDesktopParticleSize } from "@/utils/deviceTier";
 import styles from "./Hero.module.css";
 
 export default function Hero() {
   const containerRef = useRef<HTMLDivElement>(null);
   const isMobile = useIsMobile();
-  const particleSize = isMobile ? 70 : (typeof navigator !== "undefined" && (navigator.hardwareConcurrency || 4) >= 8 ? 260 : 130);
+  const particleSize = useMemo(() => (isMobile ? 70 : getDesktopParticleSize()), [isMobile]);
   const [isCanvasActive, setIsCanvasActive] = useState(true);
 
   useEffect(() => {
