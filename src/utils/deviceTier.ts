@@ -46,8 +46,7 @@ export function getDesktopParticleSize(): number {
         rendererLower.includes("quadro") ||
         (rendererLower.includes("radeon") &&
           (rendererLower.includes("rx") ||
-            rendererLower.includes("pro") ||
-            !rendererLower.includes("integrated")));
+            rendererLower.includes("pro")));
 
       const isMidEndGPU =
         rendererLower.includes("iris") ||
