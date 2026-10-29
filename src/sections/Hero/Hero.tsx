@@ -7,12 +7,13 @@ import { useScroll, useTransform, motion } from "framer-motion";
 import { useLenis } from "lenis/react";
 import { Particles } from "@/components/canvas/CurlNoise3D/Particles";
 import { useIsMobile } from "@/hooks/useIsMobile";
+import { getDesktopParticleSize } from "@/utils/deviceTier";
 import styles from "./Hero.module.css";
 
 export default function Hero() {
   const containerRef = useRef<HTMLDivElement>(null);
   const isMobile = useIsMobile();
-  const particleSize = isMobile ? 70 : (typeof navigator !== "undefined" && (navigator.hardwareConcurrency || 4) >= 8 ? 260 : 130);
+  const particleSize = isMobile ? 70 : getDesktopParticleSize();
   const [isCanvasActive, setIsCanvasActive] = useState(true);
 
   useEffect(() => {
